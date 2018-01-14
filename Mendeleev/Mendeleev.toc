@@ -1,0 +1,19 @@
+## Interface: 11200
+## Title: Mendeleev |cff7fff7f -Ace2-|r
+## Version: 1.0
+## Notes: Mendeleev adds a great deal of information to itemtooltips.
+## Notes-ruRU: Аддон добавляет много информации в подсказки.
+## Author: MoonWolf
+## X-Category: Inventory
+## SavedVariables: MendeleevDB
+## Dependencites: !Libs
+
+Locale\MendeleevGlobals.lua
+Locale\MendeleevGlobals.ruRU.lua
+Locale\MendeleevGlobals.zhCN.lua
+Locale\MendeleevGlobals.zhTW.lua
+Locale\MendeleevGlobals.koKR.lua
+Locale\MendeleevGlobals.deDE.lua
+
+MendeleevCats.lua
+Mendeleev.lua

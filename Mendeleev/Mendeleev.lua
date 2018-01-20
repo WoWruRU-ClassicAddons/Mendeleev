@@ -1,33 +1,50 @@
---Regester new addon object
-Mendeleev = AceLibrary("AceAddon-2.0"):new("AceConsole-2.0", "AceEvent-2.0", "AceDB-2.0", "AceHook-2.1", "AceDebug-2.0")
-Mendeleev:RegisterDB("MendeleevDB")
-local L = AceLibrary("AceLocale-2.2"):new("Mendeleev")
+--default options db Mendeleev
+local MENDELEEV_DEFAULT_OPTIONS = {
+			["Cats"] = {
+				["Zul'Gurub Enchants"] = 1,
+				["stacksize"] = 1,
+				["Zul'Gurub Classes"] = 1,
+				["itemid"] = 1,
+				["Ahn'Qiraj Classes CC"] = 1,
+				["Ahn'Qiraj Classes BON"] = 1,
+			},
+}
 
-local lua51 = nil
-local fmod = math.fmod or math.mod
+--Regester new addon object
+Mendeleev = AceAddonClass:new({
+	name			= MendeleevLocals.Title,
+	version		= MendeleevLocals.Version,
+	author		= MendeleevLocals.Author,
+	authorEmail	= MendeleevLocals.Email ,
+	aceCompatible	= "100",
+	category		= ACE_CATEGORY_INTERFACE,
+	defaults		= MENDELEEV_DEFAULT_OPTIONS,
+	db             = AceDbClass:new("MendeleevDB"),
+	cmd			= AceChatCmdClass:new(MendeleevLocals.cmd,MendeleevLocals.cmdOptions),
+})
 
 ------------
 -- HOOKS ---
 ------------
 
 local linkFuncs = {
-	SetAuctionItem     = GetAuctionItemLink,
-	SetBagItem         = GetContainerItemLink,
-	SetCraftItem       = function(skill, id) return (id) and GetCraftReagentItemLink(skill, id) or GetCraftItemLink(skill) end,
-	SetHyperlink       = function(link) return link end,
-	SetInventoryItem   = function(type, slot) return (type) and GetInventoryItemLink(type, slot) or GetContainerItemLink(BANK_CONTAINER,this:GetID()) end,
-	SetLootItem        = GetLootSlotLink,
-	SetMerchantItem    = GetMerchantItemLink,
-	SetQuestItem       = GetQuestItemLink,
-	SetQuestLogItem    = GetQuestLogItemLink,
-	SetTradePlayerItem = GetTradePlayerItemLink,
-	SetTradeSkillItem  = function(skill, id) return (id) and GetTradeSkillReagentItemLink(skill, id) or GetTradeSkillItemLink(skill) end,
-	SetTradeTargetItem = GetTradeTargetItemLink,
-	SetInboxItem       = function(index) return Mendeleev:FindItemID(GetInboxItem(index)) end,
-	SetLootRollItem    = function(index) return GetLootRollItemLink(index) end,
+	SetAuctionItem		= GetAuctionItemLink,
+	SetBagItem		= GetContainerItemLink,
+	SetCraftItem		= function(skill, id) return (id) and GetCraftReagentItemLink(skill, id) or GetCraftItemLink(skill) end,
+	SetHyperlink		= function(link) return link end,
+	SetInventoryItem	= function(type, slot) return (type) and GetInventoryItemLink(type, slot) or GetContainerItemLink(BANK_CONTAINER,this:GetID()) end,
+	SetLootItem		= GetLootSlotLink,
+	SetMerchantItem	= GetMerchantItemLink,
+	SetQuestItem		= GetQuestItemLink,
+	SetQuestLogItem	= GetQuestLogItemLink,
+	SetTradePlayerItem	= GetTradePlayerItemLink,
+	SetTradeSkillItem	= function(skill, id) return (id) and GetTradeSkillReagentItemLink(skill, id) or GetTradeSkillItemLink(skill) end,
+	SetTradeTargetItem	= GetTradeTargetItemLink,
+	SetInboxItem		= function(index) return Mendeleev:FindItemID(GetInboxItem(index)) end,
+	SetLootRollItem	= function(index) return GetLootRollItemLink(index) end,
 }
-
 function Mendeleev:SetItemRef(link, text, button)
+	self:CallHook("SetItemRef", link, text, button)
 	if (not strfind(link, "item") or IsControlKeyDown() or IsShiftKeyDown()) then return; end
 	self:ParseTooltip(ItemRefTooltip, link)
 end
@@ -48,47 +65,45 @@ function Mendeleev:FindItemID(name)
 	until i > max
 end
 
-local hookclosure
 function Mendeleev:HookTooltips()
-	for key,value in pairs(linkFuncs) do
-		if lua51 then
-			if not hookclosure then
-				hookclosure = loadstring([[
-					local self = select(1, ...)
-					local value = select(2, ...)
-					return function(tooltip, ...)
-						self:ParseTooltip(tooltip, value(...))
-					end
-				]])
-			end
-			self:SecureHook(GameTooltip, key, hookclosure(self, value))
-		else
-			local orig, linkFunc = key,value
-			local func = function(tooltip,a,b,c)
-				self:ParseTooltip(tooltip,linkFunc(a,b,c))
-			end
-			self:SecureHook(GameTooltip, orig, func)
+	for key, value in linkFuncs do
+		local orig, linkFunc = key,value -- I cant leave this out, dont ask me why.
+		local func = function(tooltip,a,b,c)
+			local r1,r2,r3 = self.Hooks[tooltip][orig].orig(tooltip,a,b,c)
+			self:ParseTooltip(tooltip,linkFunc(a,b,c))
+			return r1,r2,r3
 		end
+		self:Hook(GameTooltip,orig,func)
 	end
-
-	if lua51 then self:SecureHook("SetItemRef")
-	else self:Hook("SetItemRef", "SetItemRef", true) end
+	self:Hook("SetItemRef")
 end
 
 --Ace methods
-function Mendeleev:OnInitialize()
-	if lua51 == nil then lua51 = loadstring("return function(...) return ... end") and true or false end
-
-	if lua51 then
-		table.insert(MendeleevLocals.custominfosets, "ilevel")
-	end
-	
-	if (KC_Items and KC_Items.tooltip) then
-		if(self.db.profile.KCI == true)then
-			KC_Items.tooltip:RegisterFunc(self, "DisplayTooltip")
-		else
-			self:HookTooltips()
+function Mendeleev:Enable()
+	function Mendeleev:Get(var)
+		if type(self) == "string" then
+			ace:print("! ERROR: "..self)
 		end
+		return self.db:get({self.profilePath,"Cats"}, var)
+	end
+
+	function Mendeleev:Set(var,val)
+		self.db:set({self.profilePath,"Cats"}, var,val)
+	end
+
+	function Mendeleev:OGet(var)
+		if type(self) == "string" then
+			ace:print("! ERROR: "..self)
+		end
+		return self.db:get({self.profilePath,"Options"}, var)
+	end
+
+	function Mendeleev:OSet(var,val)
+		self.db:set({self.profilePath,"Options"}, var,val)
+	end
+
+	if (KC_Items and KC_Items.tooltip and self:OGet("KCI"))then
+		KC_Items.tooltip:RegisterFunc(self, "DisplayTooltip")
 	else
 		self:HookTooltips()
 	end
@@ -98,20 +113,14 @@ function Mendeleev:OnInitialize()
 	self.linkcache = {}
 	setmetatable(self.linkcache, {__mode = "k"})
 
+	self.compost = CompostLib:GetInstance("compost-1")
 	self.PT = PeriodicTableEmbed:GetInstance("1")
 	self.PTTrade = PTTradeskillsEmbed:GetInstance("1")
-
-	self:BuildOptions()
-	self:RegisterChatCommand({"/mend", "/mendeleev"}, self.options)
 end
 
-function Mendeleev:OnDisable()
-	if (KC_Items and KC_Items.tooltip) then
-		if(self.db.profile.KCI == true)then
-			KC_Items.tooltip:UnregisterFunc(self, "DisplayTooltip")
-		else
-			self:UnhookAll()
-		end
+function Mendeleev:Disable()
+	if (KC_Items and KC_Items.tooltip and not self:OGet("KCI"))then
+		KC_Items.tooltip:UnregisterFunc(self, "DisplayTooltip")
 	else
 		self:UnhookAll()
 	end
@@ -136,7 +145,7 @@ end
 
 function Mendeleev:AddLine(Stringa,Stringb)
 	local i = table.getn(self.TT) + 1
-	local t = {}
+	local t = self.compost:Acquire()
 	t.Stringa = Stringa
 	t.Stringb = Stringb
 	table.insert(self.TT, t)
@@ -154,10 +163,12 @@ function Mendeleev:ParseTooltip(frame,link,id)
 		self:DrawTooltip(frame)
 		return
 	elseif(tid == nil) then
+		self:debug("malformed link")
 		return
 	else
 		self.link = link
-		self.TT = {}
+		self.compost:Reclaim(self.TT, 1)
+		self.TT = self.compost:Acquire()
 	end
 
 	Mendeleev:DoTooltip(frame,link,id)
@@ -168,20 +179,20 @@ end
 function Mendeleev:DoTooltip(frame,link,id)
 	--Add the fixed Category information, Can be found in MendeleevGlobals.ua
 	for _,v in ipairs(MendeleevLocals.infosets) do
-		if(not self.db.profile[v.setindex]) then
+		if(not self:Get(v.name)) then
 			local z = self.PT:ItemInSets(link, v.setindex)
 			local filter = v.filter and not self.PT:ItemInSet(link, v.filter)
-            if z and not filter then
+			if z and not filter then
 				local tline, header
 				local colour = v.colour or "|cffffffff"
-
+				
 				for t,tt in pairs(z) do
 					if v.sets[tt] then
 						local val = self.PT:ItemInSet(link, tt)
 						local valstr = val and v.useval and v.useval(val, link) or ""
 						tline = (not tline and "") or tline..", "
 						tline = tline.. v.sets[tt].. valstr
-					else self:Debug(L["NoClue"]..tt)
+					else self:debug(MendeleevLocals.Misc.NoClue..tt)
 					end
 
 					if( t <= 2) then
@@ -190,8 +201,8 @@ function Mendeleev:DoTooltip(frame,link,id)
 						header = " "
 					end
 					header = colour..header.."|r"
-
-					if(fmod(t,2) == 0 and tline ~= nil) then
+					
+					if(math.mod(t,2) == 0 and tline ~= nil) then
 						self:AddLine(header,colour..tline.."|r")
 						tline = nil
 					end
@@ -201,16 +212,16 @@ function Mendeleev:DoTooltip(frame,link,id)
 				end
 				header = nil
 			end
+			self.compost:Reclaim(z)
 		end
 	end
 
-	--Add the Trade recepies information.
-	if (not self.db.profile.crafting) then
-		self.rid2data = {}
-		self.inTree = {}
+	if(not self:Get("crafting")) then
+		self.rid2data = self.compost:Acquire()
+		self.inTree = self.compost:Acquire()
 		local t = self:GetUsedInTree(id)
 		local l = self:GetUsedInList(t[2], 1)
-		local header = L["Used in"]
+		local header = MendeleevLocals.Category.TradeRep
 		local ln = table.getn(l)
 		if ln > 15 then ln = 14 end
 		for i = 1, ln do
@@ -223,26 +234,23 @@ function Mendeleev:DoTooltip(frame,link,id)
 		if table.getn(l) > 15 then
 			self:AddLine("     ...")
 		end
+		self.compost:Reclaim(t)
+		self.compost:Reclaim(l)
+		self.compost:Reclaim(self.rid2data)
 		self.rid2data = nil
+		self.compost:Reclaim(self.inTree)
 		self.inTree = nil
 	end
 
-	local _, iLevel, stack
-	if lua51 then _,_,_,iLevel,_,_,_,stack = GetItemInfo(id)
-	else _,_,_,_,_,_,stack = GetItemInfo(id) end
-	
-	if (not self.db.profile.stacksize) then
-		if(stack and stack > 1)then
-			self:AddLine(L["Stacksize"], stack)
+	if(not self:Get("stacksize")) then
+		local _,_,_,_,_,_,stack = GetItemInfo(id)
+		if(stack  and stack > 1)then
+			self:AddLine(MendeleevLocals.Misc.Stack,stack)
 		end
 	end
 
-	if (not self.db.profile.itemid) then
-		self:AddLine(L["Item ID"], id)
-	end
-
-	if (iLevel and not self.db.profile.ilevel) then
-		self:AddLine("iLevel", iLevel)
+	if(not self:Get("itemid")) then
+		self:AddLine(MendeleevLocals.Misc.ItemId,id)
 	end
 end
 
@@ -264,11 +272,11 @@ local function SortUsedInTree(a,b)
 end
 
 function Mendeleev:GetUsedInTree(id, selfskill)
-	local rt = {}
+	local rt = self.compost:Acquire()
 	local z = self.PTTrade:GetRecepieUse(id)
 	local skill = selfskill or 0
 	if z then
-		for x,y in pairs(z) do
+		for x,y in z do
 			if not self.rid2data[x] then
 				self.rid2data[x] = y
 			end
@@ -284,32 +292,30 @@ function Mendeleev:GetUsedInTree(id, selfskill)
 					skill = data[3]
 				end
 			else
-				table.insert(rt, {x, "...", y[2]})
+				table.insert(rt, self.compost:Acquire(x, "...", y[2]))
 			end
 		end
 	end
 	table.sort(rt, SortUsedInTree)
-    return {id, rt, skill}
+	return self.compost:Acquire(id, rt, skill)
 end
 
 function Mendeleev:GetUsedInList(tree, level)
-	local colour = {
-		[0] = "|cffbbbbbb",
-		[1] = "|cff00cc00",
-		[2] = "|cffffff00",
-		[3] = "|cffFF6600",
-		[4] = "|cffff0000",
-	}
+	local colour = {[0] = "|cffbbbbbb",
+				[1] = "|cff00cc00",
+				[2] = "|cffffff00",
+				[3] = "|cffFF6600",
+				[4] = "|cffff0000",}
 
-	local list = {}
-	for _, v in pairs(tree) do
+	local list = self.compost:Acquire()
+	for _, v in tree do
 		if level < 2 or v[3] > 0 then
 			table.insert(list, string.rep("     ", level).."- "..colour[self.rid2data[v[1]][2]]..self.rid2data[v[1]][1].."|r")
 			if type(v[2]) == "table" then
 				local slist = self:GetUsedInList(v[2], level+1)
 				if table.getn(slist) > 0 then
 					if v[3] > 0 then
-						for _, line in pairs(slist) do
+						for _, line in slist do
 							table.insert(list, line)
 						end
 					else
@@ -324,48 +330,82 @@ function Mendeleev:GetUsedInList(tree, level)
 	return list
 end
 
-function Mendeleev:BuildOptions()
-	self.options = {
-		type = "group",
-		args = {
-			[L["sets"]] = {
-				name = L["toggle"],
-				desc = L["Toggle Sets"],
-				type = "group",
-				args = {
-				},
-			},
-			[L["integrate"]] = {
-				type = "toggle",
-				name = L["KCI Integration"],
-				desc = L["Integrate into the KCI tooltip"],
-				get  = function() return self.db.profile.KCI end,
-				set  = function(v) self.db.profile.KCI = v end,
-			},
-		},
-	}
-
-	local t = self.options.args[L["sets"]].args
-
-	for _, v in ipairs(MendeleevLocals.infosets) do
-		local key = v.setindex
-		t[key] = {
-			name = v.name,
-			desc = v.name,
-			type = "toggle",
-			get  = function() return not self.db.profile[key] end,
-			set  = function(val) self.db.profile[key] = not val end,
-		}
+--chat commands
+function Mendeleev:CMDtoggle(name)
+	for _,v in ipairs(MendeleevLocals.infosets) do
+		if(v.name == name)then
+			if(self:Get(name))then
+				self:Set(name,nil)
+				self.cmd:status(name, TRUE, ACEG_MAP_ONOFF)
+				return
+			else
+				self:Set(name,TRUE)
+				self.cmd:status(name, FALSE, ACEG_MAP_ONOFF)
+				return
+			end
+		end
 	end
+	for _,v in  MendeleevLocals.custominfosets do
+		if(v == name)then
+			if(self:Get(name))then
+				self:Set(name,nil)
+				self.cmd:status(name, TRUE, ACEG_MAP_ONOFF)
+				return
+			else
+				self:Set(name,TRUE)
+				self.cmd:status(name, FALSE, ACEG_MAP_ONOFF)
+				return
+			end
+		end
+	end
+	self.cmd:msg(MendeleevLocals.Cmdstrings.NotThere)
+end
 
-	for _, v in ipairs(MendeleevLocals.custominfosets) do
-		local key = v
-		t[key] = {
-			name = key,
-			desc = key,
-			type = "toggle",
-			get  = function() return not self.db.profile[key] end,
-			set  = function(val) self.db.profile[key] = not val end,
-		}
+function Mendeleev:KCItoggle(argument)
+	if(argument == "toggle" or argument == "Toggle") then
+		if (KC_Items and KC_Items.tooltip) then
+			if(self:OGet("KCI")) then
+				self:OSet("KCI",nil)
+				self.cmd:status(MendeleevLocals.Cmdstrings.IntStat, FALSE, ACEG_MAP_ONOFF)
+			else
+				self:OSet("KCI",TRUE)
+				self.cmd:status(MendeleevLocals.Cmdstrings.IntStat, TRUE, ACEG_MAP_ONOFF)
+			end
+			self:Disable()
+			self:Enable()
+		else
+			self.cmd:msg(MendeleevLocals.Cmdstrings.KCINotThere)
+		end
+	elseif(argument == "report" or argument == "Report") then
+		self.cmd:status(MendeleevLocals.Cmdstrings.IntStat, self:OGet("KCI"), ACEG_MAP_ONOFF)
 	end
 end
+
+
+
+function Mendeleev:Report()
+	for _,v in ipairs(MendeleevLocals.infosets) do
+		local status, sindex
+		sindex = v.name
+
+		if(self:Get(sindex)) then
+			status = FALSE
+		else
+			status = TRUE
+		end
+
+		self.cmd:status(sindex, status, ACEG_MAP_ONOFF)
+	end
+	for _,v in  MendeleevLocals.custominfosets do
+		local status
+		if(self:Get(v)) then
+			status = FALSE
+		else
+			status = TRUE
+		end
+		self.cmd:status(v, status, ACEG_MAP_ONOFF)
+	end
+end
+
+--Register in ace
+Mendeleev:RegisterForLoad()

@@ -1,20 +1,23 @@
 ## Interface: 11200
-## Title: Mendeleev
-## Version: 0.6
-## Notes:Показывает информацию в тултипе.
+## Title: Mendeleev |cff7fff7f -Ace2-|r
+## Version: 1.0
+## Notes: Mendeleev adds a great deal of information to item tooltips.
+## Notes-esES: Mendeleev incluye montones de informacion en los tooltips de objeto.
+## Notes-ruRU: Добавляет много информации в подсказку к предмету.
 ## Author: MoonWolf
 ## DefaultState: enabled
-## Dependencies: !Libs
-## OptionalDeps: KC_Items
+## Dependencites: !Libs
+## OptionalDeps: !!!Libs, Ace2, Babble-2.2, PeriodicTable, KC_Items
+## X-Category: Inventory
 ## SavedVariables: MendeleevDB
-CompostLib.lua
-PT\CompostLib\CompostLib.lua
 
-MendeleevGlobals.lua
-Locals\MendeleevLocalszhCN.lua
-Locals\MendeleevLocalsdeDE.lua
-Locals\MendeleevLocalsfrFR.lua
-Locals\MendeleevLocalsruRU.lua
-MendeleevCmd.lua
+locales\MendeleevGlobals.lua
+locales\MendeleevGlobals.zhCN.lua
+locales\MendeleevGlobals.zhTW.lua
+locales\MendeleevGlobals.koKR.lua
+locales\MendeleevGlobals.deDE.lua
+locales\MendeleevGlobals.esES.lua
+locales\MendeleevGlobals.ruRU.lua
+
 Mendeleev.lua
 MendeleevCats.lua

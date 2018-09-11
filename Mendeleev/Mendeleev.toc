@@ -1,23 +1,38 @@
-## Interface: 11200
+﻿## Interface: 11200
 ## Title: Mendeleev |cff7fff7f -Ace2-|r
-## Version: 1.0
-## Notes: Mendeleev adds a great deal of information to item tooltips.
-## Notes-esES: Mendeleev incluye montones de informacion en los tooltips de objeto.
+## Version: 2.0.$Revision: 82063 $
+## Notes: Adds various information based on PeriodicTable to item tooltips.
+## Notes-esES: Añade información a los tooltip de objeto basándose en PeriodicTable.
+## Notes-zhTW: 在提示中顯示物品的詳細資訊，包括掉落位置、聲望要求、用途等。基於 PeriodicTable。
+## Notes-zhCN: 在提示中显示物品的详细信息，包括掉落位置、声望要求、用途等。基于 PeriodicTable。
+## Notes-koKR: 아이템 툴팁 정보 추가 애드온
+## Notes-frFR: Ajoute diverses informations basées sur PeriodicTable aux bulles d'aide des objets.
 ## Notes-ruRU: Добавляет много информации в подсказку к предмету.
-## Author: MoonWolf
-## DefaultState: enabled
-## Dependencites: !Libs
-## OptionalDeps: !!!Libs, Ace2, Babble-2.2, PeriodicTable, KC_Items
+## Author: Rabbit
+## X-Credits: MoonWolf for the orginal PT1-based version, Kemayo, Elkano, Nymbia (PT3).
+## OptionalDeps: Ace2, LibBabble-Boss-3.0, LibBabble-Zone-3.0, LibBabble-Class-3.0, Babble-2.2, LibPeriodicTable-3.1, AtlasLoot
 ## X-Category: Inventory
-## SavedVariables: MendeleevDB
+## SavedVariables: MendeleevDB, bankItemCache
+## X-Embeds: Ace2, LibBabble-Boss-3.0, LibBabble-Zone-3.0, LibBabble-Class-3.0, Babble-Ore-2.2, LibPeriodicTable-3.1
+## X-Email: rabbit.magtheridon@gmail.com
 
-locales\MendeleevGlobals.lua
-locales\MendeleevGlobals.zhCN.lua
-locales\MendeleevGlobals.zhTW.lua
-locales\MendeleevGlobals.koKR.lua
-locales\MendeleevGlobals.deDE.lua
-locales\MendeleevGlobals.esES.lua
-locales\MendeleevGlobals.ruRU.lua
+compatibility\luaAPI.lua
+embeds.xml
 
+locales\enUS.lua
+locales\zhCN.lua
+locales\zhTW.lua
+locales\koKR.lua
+locales\deDE.lua
+locales\frFR.lua
+locales\esES.lua
+locales\ruRU.lua
+
+compatibility\wowAPI.lua
 Mendeleev.lua
-MendeleevCats.lua
+Sets.lua
+Set_Instances_1-40.lua
+Set_Instances_41-60.lua
+# Set_Instances_61-70.lua
+SetsGear.lua
+ItemLevelsDB.lua

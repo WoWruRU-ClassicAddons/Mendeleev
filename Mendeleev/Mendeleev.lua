@@ -1,7 +1,7 @@
 local L = AceLibrary("AceLocale-2.2"):new("Mendeleev")
---local PT = LibStub("LibPeriodicTable-3.1")
-local PT = AceLibrary("PeriodicTable-3.0")
+local PT = LibStub("LibPeriodicTable-3.1")
 local BTS = AceLibrary("Babble-Tradeskill-2.2")
+local waterfall = AceLibrary:HasInstance("Waterfall-1.0") and AceLibrary("Waterfall-1.0") or nil
 
 local _G = getfenv()
 
@@ -115,7 +115,9 @@ function Mendeleev:OnInitialize()
 		}
 	end
 
-	self:RegisterChatCommand({"/mendeleev"}, options)
+	waterfall:Register('Mendeleev', 'aceOptions', options, 'title', 'Mendeleev '..GetAddOnMetadata("Mendeleev", "Version")..'-r82063','colorR', 1, 'colorG', 0.6, 'colorB', 0.4) 
+	self:RegisterChatCommand({"/mendeleev"}, function() waterfall:Open('Mendeleev') end)
+	self:RegisterChatCommand({"/mendeleevcl"}, options)
 end
 
 function Mendeleev:OnEnable(first)
@@ -473,7 +475,7 @@ function Mendeleev:Tooltip_OnShow(tooltip)
 	if db.showItemLevel then
 		local _,_, itemRarity,_,_,_,_,itemSlot = GetItemInfo(id)
 		local r,g,b = GetItemQualityColor(itemRarity)
-		local itemLevel = self.ItemLevelsDatabase[tonumber(itemID)] or 0
+		local itemLevel = self.ItemLevelsDatabase[tonumber(id)] or 0
 		local score = (itemRarity * itemLevel) * (itemSlot == "INVTYPE_2HWEAPON" and 2 or 1)
     if score and score > 0 then
 			tooltip:AddDoubleLine(L["iLevel"], score, 1, .82, 0, r, g, b)

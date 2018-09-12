@@ -15,18 +15,28 @@ L:RegisterTranslations("frFR", function() return {
 	["Toggle showing the stack size in the tooltip."] = "Affiche ou non la taille des piles dans la bulle d'aide.",
 	["Show 'used in' tree"] = "Afficher 'Utilisé dans'",
 	["Toggle showing the 'used in' tree in the tooltip."] = "Affiche ou non l'arbre 'Utilisé pour' dans la bulle d'aide.",
-	["Limit 'used in' tree to craftable"] = "Limiter 'Utilisé pour' aux fabricables",
-	["Toggle limiting the 'used in' tree to items the char can craft."] = "Limite ou non l'arbre 'Utilisé pour' aux objets que le personnage peut fabriquer.",
-	["Show icons in 'used in' tree"] = "Afficher icônes dans 'Utilisé dans'",
-	["Toggle showing of icons in the 'used in' tree."] = "Affiche ou non les icônes dans l'arbre 'Utilisé dans'.",
+	["Show icons in 'used in' tree"] = "Afficher les icônes dans l'arbre 'Utilisé pour'",
+	["Toggle showing of icons in the 'used in' tree."] = "Affiche ou non les icônes dans l'arbre 'Utilisé pour'",
+	["Minimal skill for 'used in' tree"] = "Compétence minimale pour l'arbre 'Utilisé pour'",
+	--["Minimal skill advance for an item to show up in the 'used in' tree."] = true
+	["Minimal skill for 'used in' tree (shift)"] = "Compétence minimale pour l'arbre 'Utilisé pour' (shift)",
+	--["Minimal skill advance for an item to show up in the 'used in' tree if Shift is held."] = true
+	--["Populate WDB"] = true,
+	--["Populating all items in WDB."] = true,
+	["TRADESKILL_UNKNOWN"] = "inconnu",
+	["TRADESKILL_TRIVIAL"] = "trivial",
+	["TRADESKILL_EASY"] = "facile",
+	["TRADESKILL_MEDIUM"] = "moyen",
+	["TRADESKILL_OPTIMAL"] = "optimal",
 	["Item ID"] = "ID objet",
 	["iLevel"] = "iNiveau",
 	["You have"] = "Vous en avez",
 	["Stacksize"] = "S'empile par",
-
+	
+	["Bought for"] = "Acheté contre",
 	["Crafted by"] = "Fabriqué par",
 	["Component in"] = "Composant pour",
-
+	
 	["Recipe source"] = "Recette",
 	["Lockpicking"] = "Crochetage",
 	["Gathering skills"] = "Métiers de récolte",
@@ -37,9 +47,8 @@ L:RegisterTranslations("frFR", function() return {
 	["Booze"] = "Alcools",
 	["Elemental bosses"] = "Boss élémentaires",
 	["Outdoor bosses"] = "Boss extérieurs",
-	["Outdoor bosses - Outland"] = "Boss extérieurs - Outreterre",
 	["Four Dragons"] = "Les dragons du cauchemar",
-
+	
 	["Gathered by"] = "Récolté par",
 	["Used by"] = "Utilisé par",
 	["Classes"] = "Classes",
@@ -48,7 +57,15 @@ L:RegisterTranslations("frFR", function() return {
 	["Found in"] = "Trouvé dans",
 	["Dropped by"] = "Butin de",
 	["Used in"] = "Utilisé dans",
-
+	--["Fits special bag"] = true
+	["SPECIALBAG_HERB"] = "Herboristerie",
+	["SPECIALBAG_ENCHANTING"] = "Enchantement",
+	["SPECIALBAG_ENGINEERING"] = "Ingénierie",
+	["SPECIALBAG_GEM"] = "Gemmes",
+	["SPECIALBAG_LEATHERWORKING"] = "Travail du cuir",
+	["SPECIALBAG_MINING"] = "Minage",
+	["SPECIALBAG_SOULSHARD"] = "Fragments d'âme",
+	
 	["Fish"] = "Poisson",
 	["Meat"] = "Viande",
 	["Bread"] = "Pain",
@@ -57,7 +74,7 @@ L:RegisterTranslations("frFR", function() return {
 	["Fruit"] = "Fruit",
 	["Misc"] = "Divers",
 	["Fungus"] = "Champignon",
-
+	
 	-- Darkmoon Faire
 	["Junk Items"] = "Bons de la Foire de Sombrelune",
 	["Leather"] = "Cuir",
@@ -65,50 +82,48 @@ L:RegisterTranslations("frFR", function() return {
 	["Heroism Card"] = "Carte d'Héroïsme",
 	["Twisting Nether Card"] = "Carte du Néant Distordu",
 	["Maelstrom Card"] = "Carte du Maelström",
-	["Crusade Card"] = "Carte de Croisade",
-	["Vengeance Card"] = "Carte de Vengeance",
-	["Madness Card"] = "Carte de Folie",
-	["Wrath Card"] = "Carte de Courroux",
-
+	
 	-- Sources
 	["Drop"] = "Butin",
 	["Vendor"] = "Vendeur",
 	["Quest"] = "Quête",
 	["Crafted"] = "Fabriqué",
-
+	
 	["UBRS"] = "UBRS",
 	["LBRS"] = "LBRS",
-
-	["Heroic"] = "Héroïque",
-
+	
 	-- Tier Sets
 	["Tier 1 Set"] = "Ensemble palier 1",
 	["Tier 2 Set"] = "Ensemble palier 2",
 	["Tier 2.5 Set"] = "Ensemble palier 2.5",
 	["Tier 3 Set"] = "Ensemble palier 3",
-	["Tier 4 Set"] = "Ensemble palier 4",
-	["Tier 5 Set"] = "Ensemble palier 5",
-	["Tier 6 Set"] = "Ensemble palier 6",
-
-	-- Arena Sets
-	["Arena - Season 1 Set"] = "Arène - Ensemble saison 1",
-	["Arena - Season 2 Set"] = "Arène - Ensemble saison 2",
-	["Arena - Season 3 Set"] = "Arène - Ensemble saison 3",
-	["Arena - Season 4 Set"] = "Arène - Ensemble saison 4",
-
+	
 	["%d%% alc/vol (%d proof)"] = "%d%% alc/vol (%d degré)",
 	[" (%d tickets)"] = " (%d tickets)",
-
-	["Badge of Justice"] = "Insigne de justice",
-	["G'eras"] = "G'eras",
-	["Smith Hauthaa"] = "Forgeron Hauthaa",
-	["Trash Mobs"] = "Trash Mobs",
-
-	-- Timed Reward Chest
---	["Timed Reward Chest1"] = true,
---	["Timed Reward Chest2"] = true,
---	["Timed Reward Chest3"] = true,
---	["Timed Reward Chest4"] = true,
-
+	
+	-- Ore Nodes
+	["Copper Vein"] = "Filon de cuivre",
+	["Tin Vein"] = "Filon d'étain",
+	["Silver Vein"] = "Filon d'argent",
+	["Iron Deposit"] = "Gisement de fer",
+	["Gold Vein"] = "Filon d'or",
+	["Mithril Deposit"] = "Gisement de mithril",
+	["Truesilver Deposit"] = "Gisement de vrai-argent",
+	["Small Thorium Vein"] =  "Petit filon de thorium",
+	["Hakkari Thorium Vein"] = "Filon de thorium Hakkari",
+	["Rich Thorium Vein"] = "Riche filon de thorium",
+	--["Ooze Covered Rich Thorium Vein"] = true,
+	["Dark Iron Deposit"] = "Gisement de sombrefer",
+	
+	-- Categories
+	["Consumable"] = "Consommable",
+	["Gear"] = "Équipement",
+	["GearSet"] = "EnsembleÉquipement",
+	["InstanceLoot"] = "ButinInstance",
+	["Misc"] = "Divers",
+	--["QuestMats"] = true
+	["Reagent"] = "Composant",
+	["Tradeskill"] = "Métier",
+	
+	--["Trash Mobs"] = true,
 }end)
-

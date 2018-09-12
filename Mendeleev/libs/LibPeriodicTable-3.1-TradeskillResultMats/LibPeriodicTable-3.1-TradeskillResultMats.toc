@@ -1,6 +1,6 @@
-﻿## Interface: 20400
+﻿## Interface: 20300
 ## LoadOnDemand: 1
-## Title: Lib: PeriodicTable-3.1 [|cffeda55fTradeskillResultMats|r]
+## Title: Lib: Periodic Table 3.1 [|cffeda55fTradeskillResultMats|r]
 ## Notes: PeriodicTable data module.
 ## Author: Nymbia
 ## Version: 3.1

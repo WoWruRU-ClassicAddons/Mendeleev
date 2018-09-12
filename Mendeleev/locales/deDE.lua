@@ -1,27 +1,42 @@
-﻿local L = AceLibrary("AceLocale-2.2"):new("Mendeleev")
+local L = AceLibrary("AceLocale-2.2"):new("Mendeleev")
 
 L:RegisterTranslations("deDE", function() return {
 	["Toggle sets."] = "Sets ein-/ausschalten.",
 	["Toggle sets from showing information in the tooltip."] = "Sets zur Anzeige der Informationen im Tooltip ein-/ausschalten.",
-	["Toggle sets in the %s category."] = "Sets ein-/ausschalten in der %s Kategorie.",
+	["Toggle sets in the %s category."] = "Sets in der Kategorie %s ein-/ausschalten.",
 	["Toggle %s."] = "%s ein/aus.",
 	["Show item level"] = "Item Level anzeigen",
 	["Toggle showing the item level in the tooltip."] = "Die Anzeige des Item Levels im Tooltip ein-/ausschalten.",
-	["Show item identifier"] = "Item Bezeichnung (Item ID) anzeigen",
-	["Toggle showing the item identifier in the tooltip."] = "Die Anzeige der Item Bezeichnung (Item ID) ein-/ausschalten.",
+	["Show item identifier"] = "Item ID anzeigen",
+	["Toggle showing the item identifier in the tooltip."] = "Die Anzeige der Item ID ein-/ausschalten.",
+	["Show item count"] = "Itemanzahl anzeigen",
+	["Toggle showing the item count in the tooltip."] = "Die Anzeige der Itemanzahl ein-/ausschalten.",
 	["Show stack size"] = "Stapelgröße anzeigen",
 	["Toggle showing the stack size in the tooltip."] = "Die Anzeige der Stapelgröße ein-/ausschalten.",
 	["Show 'used in' tree"] = "'Verwendet in'-Baum anzeigen",
 	["Toggle showing the 'used in' tree in the tooltip."] = "Die Anzeige des 'Verwendet in'-Baumes ein-/ausschalten.",
-	["Limit 'used in' tree to craftable"] = "'Verwendet in'-Baum auf Herstellbares beschränken.",
-	["Toggle limiting the 'used in' tree to items the char can craft."] = "Die Beschränkung des 'Verwendet in'-Baumes auf Gegenstände, die der Char herstellen kann ein-/ausschalten.",
+	["Show icons in 'used in' tree"] = "Symbole im 'Verwendet in'-Baum anzeigen",
+	["Toggle showing of icons in the 'used in' tree."] = "Symbolanzeige im 'Verwendet in'-Baum ein-/ausschalten.",
+	["Minimal skill for 'used in' tree"] = "Mindest-Skill für 'Verwendet in'-Baum",
+	["Minimal skill advance for an item to show up in the 'used in' tree."] = "Mindest-Skill eines Gegenstandes, damit dieser im 'Verwendet in'-Baum angezeigt wird.",
+	["Minimal skill for 'used in' tree (shift)"] = "Mindest-Skill für 'Verwendet in'-Baum (Shift)",
+	["Minimal skill advance for an item to show up in the 'used in' tree if Shift is held."] = "Mindest-Skill eines Gegenstandes (während Shift gedrückt wird), damit dieser im 'Verwendet in'-Baum angezeigt wird.",
+	--["Populate WDB"] = true,
+	--["Populating all items in WDB."] = true,
+	["TRADESKILL_UNKNOWN"] = "unbekannt",
+	["TRADESKILL_TRIVIAL"] = "trivial",
+	["TRADESKILL_EASY"] = "leicht",
+	["TRADESKILL_MEDIUM"] = "mittel",
+	["TRADESKILL_OPTIMAL"] = "optimal",
 	["Item ID"] = "Item ID",
 	["iLevel"] = "Item Level",
+	["You have"] = "Du hast",
 	["Stacksize"] = "Stapelgröße",
-
+	
+	["Bought for"] = "Gekauft für",
 	["Crafted by"] = "Hergestellt von",
 	["Component in"] = "Bestandteil von",
-
+	
 	["Recipe source"] = "Rezept-Herkunft",
 	["Lockpicking"] = "Schlossknacken",
 	["Gathering skills"] = "Sammelfertigkeiten",
@@ -32,9 +47,8 @@ L:RegisterTranslations("deDE", function() return {
 	["Booze"] = "Alkohol",
 	["Elemental bosses"] = "Elementar Bosse",
 	["Outdoor bosses"] = "Outdoor Bosse",
-	["Outdoor bosses - Outland"] = "Outdoor Bosse - Scherbenwelt",
 	["Four Dragons"] = "Vier Drachen",
-
+	
 	["Gathered by"] = "Gesammelt von",
 	["Used by"] = "Verwendet von",
 	["Classes"] = "Klassen",
@@ -43,7 +57,15 @@ L:RegisterTranslations("deDE", function() return {
 	["Found in"] = "Gefunden in",
 	["Dropped by"] = "Gedroppt von",
 	["Used in"] = "Verwendet in",
-
+	["Fits special bag"] = "Spezialtasche",
+	["SPECIALBAG_HERB"] = "Kräuterkunde",
+	["SPECIALBAG_ENCHANTING"] = "Verzauberkunst",
+	["SPECIALBAG_ENGINEERING"] = "Ingenieurskunst",
+	["SPECIALBAG_GEM"] = "Edelsteine",
+	["SPECIALBAG_LEATHERWORKING"] = "Lederverarbeitung",
+	["SPECIALBAG_MINING"] = "Bergbau",
+	["SPECIALBAG_SOULSHARD"] = "Seelensplitter",
+	
 	["Fish"] = "Fisch",
 	["Meat"] = "Fleisch",
 	["Bread"] = "Brot",
@@ -52,67 +74,56 @@ L:RegisterTranslations("deDE", function() return {
 	["Fruit"] = "Frucht",
 	["Misc"] = "Sonstiges",
 	["Fungus"] = "Pilz",
-
+	
 	-- Darkmoon Faire
 	["Junk Items"] = "Ramsch Gegenstände",
 	["Leather"] = "Leder",
-	["Blue Dragon Card"] = "Dunkelmond-Karte: Blauer Drache",
-	["Heroism Card"] = "Dunkelmond-Karte: Heldentum",
-	["Twisting Nether Card"] = "Dunkelmond-Karte: Wirbelnder Nether",
-	["Maelstrom Card"] = "Dunkelmond-Karte: Maelstrom",
-	["Crusade Card"] = "Dunkelmond-Karte: Kreuzzug",
-	["Vengeance Card"] = "Dunkelmond-Karte: Vergeltung",
-	["Madness Card"] = "Dunkelmond-Karte: Wahnsinn",
-	["Wrath Card"] = "Dunkelmond-Karte: Zorn",
-
+	["Blue Dragon Card"] = "Blauer Drache",
+	["Heroism Card"] = "Heldentum",
+	["Twisting Nether Card"] = "Wirbelnder Nether",
+	["Maelstrom Card"] = "Maelstrom",
+	
 	-- Sources
 	["Drop"] = "Drop",
 	["Vendor"] = "Händler",
 	["Quest"] = "Quest",
 	["Crafted"] = "Hergestellt",
-
+	
 	["UBRS"] = "UBRS",
 	["LBRS"] = "LBRS",
-
-	["Heroic"] = "Heroisch",
-
+	
 	-- Tier Sets
 	["Tier 1 Set"] = "T1 Set",
 	["Tier 2 Set"] = "T2 Set",
 	["Tier 2.5 Set"] = "T2.5 Set",
 	["Tier 3 Set"] = "T3 Set",
-	["Tier 4 Set"] = "T4 Set",
-	["Tier 5 Set"] = "T5 Set",
-	["Tier 6 Set"] = "T6 Set",
-
-	-- Arena Sets
-	["Arena - Season 1 Set"] = "Arena - Saison 1 Set",
-	["Arena - Season 2 Set"] = "Arena - Saison 2 Set",
-	["Arena - Season 3 Set"] = "Arena - Saison 3 Set",
-	["Arena - Season 4 Set"] = "Arena - Saison 4 Set",
-
+	
 	["%d%% alc/vol (%d proof)"] = " %d%% Vol.",
 	[" (%d tickets)"] = " (%d Tickets)",
-
-	-- Categories
-	--["Consumable"] = "Verbrauchbar", -- not used
-	--["Gear"] = "Ausrüstung", -- not used
-	--["GearSet"] = "AusrüstungsSets", -- not used
-	--["InstanceLoot"] = "InstanzLoot", -- not used
-	--["InstanceLootHeroic"] = "InstanzLootHeroisch", -- not used
-	--["Misc"] = true, -- duplicate entry
-	--["QuestMats"] = "QuestMats", -- not used
-	--["Reagent"] = "Reagenz", -- not used
-	--["Tradeskill"] = "Tradeskill", -- not used
 	
-	["Badge of Justice"] = "Abzeichen der Gerechtigkeit",
-	["G'eras"] = "G'eras",
-	["Smith Hauthaa"] = "Schmiedin Hauthaa",
-
-	-- Timed Reward Chest
---	["Timed Reward Chest1"] = true,
---	["Timed Reward Chest2"] = true,
---	["Timed Reward Chest3"] = true,
---	["Timed Reward Chest4"] = true,
-
+	-- Ore Nodes
+	["Copper Vein"] = "Kupfervorkommen",
+	["Tin Vein"] = "Zinnvorkommen",
+	["Silver Vein"] = "Silbervorkommen",
+	["Iron Deposit"] = "Eisenvorkommen",
+	["Gold Vein"] = "Goldvorkommen",
+	["Mithril Deposit"] = "Mithrilablagerung",
+	["Truesilver Deposit"] = "Echtsilberablagerung",
+	["Small Thorium Vein"] = "Kleines Thoriumvorkommen",
+	["Hakkari Thorium Vein"] = "Hakkari Thoriumvorkommen",
+	["Rich Thorium Vein"] = "Reiches Thoriumvorkommen",
+	["Ooze Covered Rich Thorium Vein"] = "Schlammbedecktes reiches Thoriumvorkommen",
+	["Dark Iron Deposit"] = "Dunkeleisenablagerung",
+	
+	-- Categories
+	["Consumable"] = "Verbrauchbar",
+	["Gear"] = "Ausrüstung",
+	["GearSet"] = "Ausrüstungs-Set",
+	["InstanceLoot"] = "Instanz-Loot",
+	["Misc"] = "Sonstiges",
+	["QuestMats"] = "Quest-Mats",
+	["Reagent"] = "Reagenz",
+	["Tradeskill"] = "Tradeskill",
+	
+	["Trash Mobs"] = "Trash Mobs",
 }end)

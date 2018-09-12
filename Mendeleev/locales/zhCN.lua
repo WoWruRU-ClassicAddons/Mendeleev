@@ -15,20 +15,30 @@ L:RegisterTranslations("zhCN", function() return {
 	["Toggle showing the stack size in the tooltip."] = "指定是否在提示信息上显示堆叠数量。",
 	["Show 'used in' tree"] = "显示商业技能信息",
 	["Toggle showing the 'used in' tree in the tooltip."] = "指定是否在提示信息上显示商业技能信息。",
-	["Limit 'used in' tree to craftable"] = "只显示可用的商业技能信息",
-	["Toggle limiting the 'used in' tree to items the char can craft."] = "指定是否只显示玩家可以使用的物品的商业技能信息。",
 	["Show icons in 'used in' tree"] = "在可用的商业技能信息显示图标",
 	["Toggle showing of icons in the 'used in' tree."] = "指定是否在可用商业技能信息显示图标。",
+	["Minimal skill for 'used in' tree"] = "最小化可用商业技能信息",
+	["Minimal skill advance for an item to show up in the 'used in' tree."] = "最小化可用商业技能信息并显示当前提示。",
+	["Minimal skill for 'used in' tree (shift)"] = "最小化可用商业技能信息（Shift）",
+	["Minimal skill advance for an item to show up in the 'used in' tree if Shift is held."] = "当按下 Shift 键时最小化可用商业技能信息并显示当前提示。",
+	--["Populate WDB"] = true,
+	--["Populating all items in WDB."] = true,
+	["TRADESKILL_UNKNOWN"] = "未知",
+	["TRADESKILL_TRIVIAL"] = "无价值",
+	["TRADESKILL_EASY"] = "简单",
+	["TRADESKILL_MEDIUM"] = "中等",
+	["TRADESKILL_OPTIMAL"] = "适用",
 	["Item ID"] = "物品 ID",
 	["iLevel"] = "物品等级",
 	["You have"] = "你有",
 	["Stacksize"] = "堆叠数量",
-
+	
+	["Bought for"] = "购买于",
 	["Crafted by"] = "制造于",
 	["Component in"] = "材料",
-
+	
 	["Recipe source"] = "配方来源",
-	["Lockpicking"] = "开锁",	
+	["Lockpicking"] = "开锁",
 	["Gathering skills"] = "采集技能",
 	["Mine Gems"] = "采矿",
 	["Trade skills"] = "商业技能",
@@ -37,9 +47,8 @@ L:RegisterTranslations("zhCN", function() return {
 	["Booze"] = "酒精浓度",
 	["Elemental bosses"] = "元素首领",
 	["Outdoor bosses"] = "户外首领",
-	["Outdoor bosses - Outland"] = "户外首领 - 外域",
 	["Four Dragons"] = "翡翠四绿龙",
-
+	
 	["Gathered by"] = "收集",
 	["Used by"] = "用途",
 	["Classes"] = "职业",
@@ -48,7 +57,15 @@ L:RegisterTranslations("zhCN", function() return {
 	["Found in"] = "发现于",
 	["Dropped by"] = "掉落",
 	["Used in"] = "使用在",
-
+	["Fits special bag"] = "适合特殊容器",
+	["SPECIALBAG_HERB"] = "草药学",
+	["SPECIALBAG_ENCHANTING"] = "附魔",
+	["SPECIALBAG_ENGINEERING"] = "工程学",
+	["SPECIALBAG_GEM"] = "宝石",
+	["SPECIALBAG_LEATHERWORKING"] = "制皮",
+	["SPECIALBAG_MINING"] = "采矿",
+	["SPECIALBAG_SOULSHARD"] = "灵魂碎片",
+	
 	["Fish"] = "鱼类",
 	["Meat"] = "肉类",
 	["Bread"] = "面包",
@@ -57,7 +74,7 @@ L:RegisterTranslations("zhCN", function() return {
 	["Fruit"] = "水果",
 	["Misc"] = "其他",
 	["Fungus"] = "蘑菇",
-
+	
 	-- Darkmoon Faire
 	["Junk Items"] = "灰色物品",
 	["Leather"] = "皮革",
@@ -65,61 +82,48 @@ L:RegisterTranslations("zhCN", function() return {
 	["Heroism Card"] = "暗月卡片：英雄",
 	["Twisting Nether Card"] = "暗月卡片：虚空",
 	["Maelstrom Card"] = "暗月卡片：漩涡",
-	["Crusade Card"] = "暗月卡片：远征",
-	["Vengeance Card"] = "暗月卡片：复仇",
-	["Madness Card"] = "暗月卡片：疯狂",
-	["Wrath Card"] = "暗月卡片：怒火",
-
+	
 	-- Sources
 	["Drop"] = "掉落",
 	["Vendor"] = "商人",
 	["Quest"] = "任务",
 	["Crafted"] = "制造",
-
+	
 	["UBRS"] = "黑石塔上层",
 	["LBRS"] = "黑石塔下层",
-	
-	["Heroic"] = "英雄模式",
 	
 	-- Tier Sets
 	["Tier 1 Set"] 		= "T1 套装",
 	["Tier 2 Set"] 		= "T2 套装",
 	["Tier 2.5 Set"] 	= "T2.5 套装",
 	["Tier 3 Set"] 		= "T3 套装",
-	["Tier 4 Set"] 		= "T4 套装",
-	["Tier 5 Set"] 		= "T5 套装",
-	["Tier 6 Set"] 		= "T6 套装",
 	
-	-- Arena Sets
-	["Arena - Season 1 Set"] = "竞技场套装：第1赛季",
-	["Arena - Season 2 Set"] = "竞技场套装：第2赛季",
-	["Arena - Season 3 Set"] = "竞技场套装：第3赛季",
-	["Arena - Season 4 Set"] = "竞技场套装：第4赛季",
-		
 	["%d%% alc/vol (%d proof)"] = "酒精浓度：%d%%",
 	[" (%d tickets)"] = " （%d张票）",
-
+	
+	-- Ore Nodes
+	["Copper Vein"] = "铜矿",
+	["Tin Vein"] = "锡矿",
+	["Silver Vein"] = "银矿",
+	["Iron Deposit"] = "铁矿石",
+	["Gold Vein"] = "金矿石",
+	["Mithril Deposit"] = "秘银矿脉",
+	["Truesilver Deposit"] = "真银矿石",
+	["Small Thorium Vein"] = "瑟银矿脉",
+	["Hakkari Thorium Vein"] = "哈卡莱瑟银矿脉",
+	["Rich Thorium Vein"] = "富瑟银矿",
+	["Ooze Covered Rich Thorium Vein"] = "软泥覆盖的富瑟银矿脉",
+	["Dark Iron Deposit"] = "黑铁矿脉",
+	
 	-- Categories
 	["Consumable"] = "容器",
 	["Gear"] = "装备",
 	["GearSet"] = "套装",
 	["InstanceLoot"] = "副本拾取",
-	["InstanceLootHeroic"] = "英雄副本拾取",
 	["Misc"] = "其他",
 	["QuestMats"] = "任务奖励",
 	["Reagent"] = "职业施法材料",
 	["Tradeskill"] = "商业技能",
 	
-	["Badge of Justice"] = "公正徽章",
-	["G'eras"] = "基厄拉斯",
-	["Smith Hauthaa"] = "铁匠霍尔萨",
 	["Trash Mobs"] = "小怪掉落",
-
-	-- Timed Reward Chest
-	["Timed Reward Chest1"] = "限时击杀首领奖励1",
-	["Timed Reward Chest2"] = "限时击杀首领奖励2",
-	["Timed Reward Chest3"] = "限时击杀首领奖励3",
-	["Timed Reward Chest4"] = "限时击杀首领奖励4",
-
-	["Poisons"] = "制毒",
 }end)

@@ -5,7 +5,7 @@ function GetItemCount(obj, includeBank)
 	local count = 0
 
 	if type(obj) == 'string' then
-		itemID = string.match(obj, "item:(%d+):")
+		itemID = string.match(obj, "item:(%d+)")
 		if not itemID then
 			itemID = GetItemInfo(obj)
 		end
@@ -20,7 +20,7 @@ function GetItemCount(obj, includeBank)
 			for slot = size, 1, -1 do
 				slotLink = GetContainerItemLink(bag, slot)
 				if slotLink then
-					slotID = string.match(slotLink, "item:(%d+):")
+					slotID = string.match(slotLink, "item:(%d+)")
 					if slotID == itemID then
 						_, itemCount = GetContainerItemInfo(bag, slot)
 						count = count + itemCount
@@ -40,7 +40,7 @@ local f = CreateFrame('Frame')
 f:RegisterEvent("BANKFRAME_OPENED")	
 f:RegisterEvent("PLAYERBANKSLOTS_CHANGED")	
 f:SetScript('OnEvent', function()
-	if event == 'BANKFRAME_OPENED' and table.getn(bankItemCache) then return end
+	if event == 'BANKFRAME_OPENED' and getn(bankItemCache) then return end
 	bankItemCache = {} -- clear cache
 	local size, slotLink, slotID, itemCount	
 	for bag = 10, -1, -1 do -- iterate bank bags; -1 - generic bank frame
@@ -51,7 +51,7 @@ f:SetScript('OnEvent', function()
 					slotLink = GetContainerItemLink(bag, slot)
 					if slotLink then
 						_, itemCount = GetContainerItemInfo(bag, slot)
-						slotID = string.match(slotLink, "^|%x+|Hitem:(%d+):")
+						slotID = string.match(slotLink, "^|%x+|Hitem:(%d+)")
 						if bankItemCache[slotID] then
 							itemCount = itemCount + bankItemCache[slotID]
 						end
@@ -62,3 +62,13 @@ f:SetScript('OnEvent', function()
 		end
 	end
 end)
+
+function GetItemIcon(itemID)
+	if type(tonumber(itemID)) ~= 'number' then return end
+	local itemIcon = select(9, GetItemInfo(itemID))
+	if not itemIcon then
+		GameTooltip:SetHyperlink('item:' .. itemID) -- adding an item to the cache so that GetItemInfo does not return nil!
+		itemIcon = select(9, GetItemInfo(itemID))
+	end
+	return itemIcon
+end

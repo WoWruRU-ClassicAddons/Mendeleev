@@ -15,20 +15,28 @@ L:RegisterTranslations("enUS", function() return {
 	["Toggle showing the stack size in the tooltip."] = true,
 	["Show 'used in' tree"] = true,
 	["Toggle showing the 'used in' tree in the tooltip."] = true,
-	["Limit 'used in' tree to craftable"] = true,
-	["Toggle limiting the 'used in' tree to items the char can craft."] = true,
 	["Show icons in 'used in' tree"] = true,
 	["Toggle showing of icons in the 'used in' tree."] = true,
+	["Minimal skill for 'used in' tree"] = true,
+	["Minimal skill advance for an item to show up in the 'used in' tree."] = true,
+	["Minimal skill for 'used in' tree (shift)"] = true,
+	["Minimal skill advance for an item to show up in the 'used in' tree if Shift is held."] = true,
 	["Populate WDB"] = true,
 	["Populating all items in WDB."] = true,
+	["TRADESKILL_UNKNOWN"] = "unknown",
+	["TRADESKILL_TRIVIAL"] = "trivial",
+	["TRADESKILL_EASY"] = "easy",
+	["TRADESKILL_MEDIUM"] = "medium",
+	["TRADESKILL_OPTIMAL"] = "optimal",
 	["Item ID"] = true,
 	["iLevel"] = true,
 	["You have"] = true,
 	["Stacksize"] = true,
-
+	
+	["Bought for"] = true,
 	["Crafted by"] = true,
 	["Component in"] = true,
-
+	
 	["Recipe source"] = true,
 	["Lockpicking"] = true,
 	["Gathering skills"] = true,
@@ -39,9 +47,8 @@ L:RegisterTranslations("enUS", function() return {
 	["Booze"] = true,
 	["Elemental bosses"] = true,
 	["Outdoor bosses"] = true,
-	["Outdoor bosses - Outland"] = true,
 	["Four Dragons"] = true,
-
+	
 	["Gathered by"] = true,
 	["Used by"] = true,
 	["Classes"] = true,
@@ -50,7 +57,15 @@ L:RegisterTranslations("enUS", function() return {
 	["Found in"] = true,
 	["Dropped by"] = true,
 	["Used in"] = true,
-
+	["Fits special bag"] = true,
+	["SPECIALBAG_HERB"] = "Herbalism",
+	["SPECIALBAG_ENCHANTING"] = "Enchanting",
+	["SPECIALBAG_ENGINEERING"] = "Engineering",
+	["SPECIALBAG_GEM"] = "Gems",
+	["SPECIALBAG_LEATHERWORKING"] = "Leatherworking",
+	["SPECIALBAG_MINING"] = "Mining",
+	["SPECIALBAG_SOULSHARD"] = "Soul Shards",
+	
 	["Fish"] = true,
 	["Meat"] = true,
 	["Bread"] = true,
@@ -59,7 +74,7 @@ L:RegisterTranslations("enUS", function() return {
 	["Fruit"] = true,
 	["Misc"] = true,
 	["Fungus"] = true,
-
+	
 	-- Darkmoon Faire
 	["Junk Items"] = true,
 	["Leather"] = true,
@@ -67,61 +82,48 @@ L:RegisterTranslations("enUS", function() return {
 	["Heroism Card"] = true,
 	["Twisting Nether Card"] = true,
 	["Maelstrom Card"] = true,
-	["Crusade Card"] = true,
-	["Vengeance Card"] = true,
-	["Madness Card"] = true,
-	["Wrath Card"] = true,
-
+	
 	-- Sources
 	["Drop"] = true,
 	["Vendor"] = true,
 	["Quest"] = true,
 	["Crafted"] = true,
-
+	
 	["UBRS"] = true,
 	["LBRS"] = true,
-	
-	["Heroic"] = true,
 	
 	-- Tier Sets
 	["Tier 1 Set"] = true,
 	["Tier 2 Set"] = true,
 	["Tier 2.5 Set"] = true,
 	["Tier 3 Set"] = true,
-	["Tier 4 Set"] = true,
-	["Tier 5 Set"] = true,
-	["Tier 6 Set"] = true,
-	
-	-- Arena Sets
-	["Arena - Season 1 Set"] = true,
-	["Arena - Season 2 Set"] = true,
-	["Arena - Season 3 Set"] = true,
-	["Arena - Season 4 Set"] = true,
 	
 	["%d%% alc/vol (%d proof)"] = true,
 	[" (%d tickets)"] = true,
-
+	
+	-- Ore Nodes
+	["Copper Vein"] = true,
+	["Tin Vein"] = true,
+	["Silver Vein"] = true,
+	["Iron Deposit"] = true,
+	["Gold Vein"] = true,
+	["Mithril Deposit"] = true,
+	["Truesilver Deposit"] = true,
+	["Small Thorium Vein"] = true,
+	["Hakkari Thorium Vein"] = true,
+	["Rich Thorium Vein"] = true,
+	["Ooze Covered Rich Thorium Vein"] = true,
+	["Dark Iron Deposit"] = true,
+	
 	-- Categories
 	["Consumable"] = true,
 	["Gear"] = true,
 	["GearSet"] = true,
 	["InstanceLoot"] = true,
-	["InstanceLootHeroic"] = true,
 	["Misc"] = true,
 	["QuestMats"] = true,
 	["Reagent"] = true,
 	["Tradeskill"] = true,
 	
-	["Badge of Justice"] = true,
-	["G'eras"] = true,
-	["Smith Hauthaa"] = true,
 	["Trash Mobs"] = true,
-
-	-- Timed Reward Chest
-	["Timed Reward Chest1"] = true,
-	["Timed Reward Chest2"] = true,
-	["Timed Reward Chest3"] = true,
-	["Timed Reward Chest4"] = true,
-
-	["Poisons"] = true,
 }end)

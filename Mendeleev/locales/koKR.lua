@@ -1,32 +1,42 @@
-﻿local L = AceLibrary("AceLocale-2.2"):new("Mendeleev")
+local L = AceLibrary("AceLocale-2.2"):new("Mendeleev")
 
 L:RegisterTranslations("koKR", function() return {
-	["Toggle sets."] = "설정 전환.",
-	["Toggle sets from showing information in the tooltip."] = "툴팁에 표시할 정보 설정을 전환합니다.",
-	["Toggle sets in the %s category."] = "%s 분류 설정을 전환합니다.",
-	["Toggle %s."] = "%s 전환.",
+	["Toggle sets."] = "세트 보기/숨기기",
+	["Toggle sets from showing information in the tooltip."] = "툴팁에 표시되는 정보에 세트를 보이거나 숨깁니다.",
+	["Toggle sets in the %s category."] = "%s 분류에 세트를 보이거나 숨깁니다.",
+	["Toggle %s."] = "%s 보기/숨기기",
 	["Show item level"] = "아이템 등급 표시",
 	["Toggle showing the item level in the tooltip."] = "툴팁에 아이템 등급을 표시합니다.",
 	["Show item identifier"] = "아이템 식별자 표시",
 	["Toggle showing the item identifier in the tooltip."] = "툴팁에 아이템 식별자를 표시합니다.",
-	["Show item count"] = "아이템 갯수 표시",
-	["Toggle showing the item count in the tooltip."] = "툴팁에 아이템 보유 갯수를 표시합니다.",
+	["Show item count"] = "아이템 개수 보이기",
+	["Toggle showing the item count in the tooltip."] = "툴팁에 아이템 개수를 표시합니다.",
 	["Show stack size"] = "묶음 크기 표시",
 	["Toggle showing the stack size in the tooltip."] = "툴팁에 묶음 크기를 표시합니다.",
 	["Show 'used in' tree"] = "'사용처' 목록 표시",
 	["Toggle showing the 'used in' tree in the tooltip."] = "툴팁에 '사용처' 목록을 표시합니다.",
-	["Limit 'used in' tree to craftable"] = "제작가능한 것에만 '사용처' 목록 제한",
-	["Toggle limiting the 'used in' tree to items the char can craft."] = "케릭터가 제작할 수 있는 아이템에만 사용처 목록을 표시하도록 제한합니다.",
 	["Show icons in 'used in' tree"] = "'사용처' 목록에 아이콘 표시",
-	["Toggle showing of icons in the 'used in' tree."] = "툴팁에 '사용처' 목록에 아이콘들을 표시합니다.",
+	["Toggle showing of icons in the 'used in' tree."] = "'사용처' 목록에 아이콘 표시를 전환합니다.",
+	["Minimal skill for 'used in' tree"] = "'사용처' 목록 최소 기술",
+	["Minimal skill advance for an item to show up in the 'used in' tree."] = "'사용처' 목록에 표시할 아이템에 대한 최소 제작 기술입니다.",
+	["Minimal skill for 'used in' tree (shift)"] = "'사용처 목록 최소 기술 (SHIFT)'",
+	["Minimal skill advance for an item to show up in the 'used in' tree if Shift is held."] = "SHFIT키 사용 시 '사용처' 목록에 표시할 아이템에 대한 최소 제작 기술입니다.",
+	--["Populate WDB"] = true,
+	--["Populating all items in WDB."] = true,
+	["TRADESKILL_UNKNOWN"] = "알 수 없음",
+	["TRADESKILL_TRIVIAL"] = "최하",
+	["TRADESKILL_EASY"] = "하",
+	["TRADESKILL_MEDIUM"] = "중",
+	["TRADESKILL_OPTIMAL"] = "최상",
 	["Item ID"] = "아이템 ID",
 	["iLevel"] = "아이템 레벨",
-	["You have"] = "보유갯수",
+	["You have"] = "보유",
 	["Stacksize"] = "묶음크기",
-
+	
+	["Bought for"] = "구입 화폐",
 	["Crafted by"] = "제작 기술",
 	["Component in"] = "재료 용도",
-
+	
 	["Recipe source"] = "도안 출처",
 	["Lockpicking"] = "자물쇠따기",
 	["Gathering skills"] = "채집 기술",
@@ -37,9 +47,8 @@ L:RegisterTranslations("koKR", function() return {
 	["Booze"] = "술류",
 	["Elemental bosses"] = "속성 보스류",
 	["Outdoor bosses"] = "야외 보스류",
-	["Outdoor bosses - Outland"] = "야외 보스류 - 아웃랜드",
 	["Four Dragons"] = "네마리 용류",
-
+	
 	["Gathered by"] = "채집됨",
 	["Used by"] = "사용자",
 	["Classes"] = "직업",
@@ -48,7 +57,15 @@ L:RegisterTranslations("koKR", function() return {
 	["Found in"] = "발견 장소",
 	["Dropped by"] = "드롭됨",
 	["Used in"] = "사용처",
-
+	["Fits special bag"] = "특수 가방",
+	["SPECIALBAG_HERB"] = "약초채집",
+	["SPECIALBAG_ENCHANTING"] = "마법부여",
+	["SPECIALBAG_ENGINEERING"] = "기계공학",
+	["SPECIALBAG_GEM"] = "보석세공",
+	["SPECIALBAG_LEATHERWORKING"] = "가죽세공",
+	["SPECIALBAG_MINING"] = "채광",
+	["SPECIALBAG_SOULSHARD"] = "영혼의 조각",
+	
 	["Fish"] = "물고기",
 	["Meat"] = "고기",
 	["Bread"] = "빵",
@@ -57,7 +74,7 @@ L:RegisterTranslations("koKR", function() return {
 	["Fruit"] = "과일",
 	["Misc"] = "기타",
 	["Fungus"] = "곰팡이류",
-
+	
 	-- Darkmoon Faire
 	["Junk Items"] = "잡동사니",
 	["Leather"] = "가죽",
@@ -65,61 +82,48 @@ L:RegisterTranslations("koKR", function() return {
 	["Heroism Card"] = "영웅심 카드",
 	["Twisting Nether Card"] = "뒤틀린 황천 카드",
 	["Maelstrom Card"] = "혼돈의 소용돌이 카드",
-	["Crusade Card"] = "성전 카드",
-	["Vengeance Card"] = "앙갚음 카드",
-	["Madness Card"] = "광기 카드",
-	["Wrath Card"] = "진노 카드",
-
+	
 	-- Sources
 	["Drop"] = "드롭",
 	["Vendor"] = "상인",
 	["Quest"] = "퀘스트",
 	["Crafted"] = "제작",
-
+	
 	["UBRS"] = "첨탑 상층",
 	["LBRS"] = "첨탑 하층",
 	
-	["Heroic"] = "(영웅)",
-	
 	-- Tier Sets
-	["Tier 1 Set"] = "1 단계 셋트(화심)",
+	["Tier 1 Set"] = "1 단계 세트(화심)",
 	["Tier 2 Set"] = "2 단계 세트(검둥)",
-	["Tier 2.5 Set"] = "2.5 단계 셋트(사원)",
-	["Tier 3 Set"] = "3 단계 셋트(낙스)",
-	["Tier 4 Set"] = "4 단계 셋트(카라잔 등)",
-	["Tier 5 Set"] = "5 단계 셋트(검은사원 등)",
-	["Tier 6 Set"] = "6 단계 셋트(?)",
-	
-	-- Arena Sets
-	["Arena - Season 1 Set"] = "투기장 - 시즌 1 셋트",
-	["Arena - Season 2 Set"] = "투기장 - 시즌 2 셋트",
-	["Arena - Season 3 Set"] = "투기장 - 시즌 3 셋트",
-	["Arena - Season 4 Set"] = "투기장 - 시즌 4 셋트",
+	["Tier 2.5 Set"] = "2.5 단계 세트(사원)",
+	["Tier 3 Set"] = "3 단계 세트(낙스)",
 	
 	["%d%% alc/vol (%d proof)"] = "%d%% alc/vol (%d 도)",
 	[" (%d tickets)"] = " (%d 티켓)",
-
+	
+	-- Ore Nodes
+	["Copper Vein"] = "구리 광맥",
+	["Tin Vein"] = "주석 광맥",
+	["Silver Vein"] = "은 광맥",
+	["Iron Deposit"] = "철 광맥",
+	["Gold Vein"] = "금 광맥",
+	["Mithril Deposit"] = "미스릴 광맥",
+	["Truesilver Deposit"] = "진은 광맥",
+	["Small Thorium Vein"] = "작은 토륨 광맥",
+	["Hakkari Thorium Vein"] = "학카리 토륨 광맥",
+	["Rich Thorium Vein"] = "풍부한 토륨 광맥",
+	["Ooze Covered Rich Thorium Vein"] = "진흙으로 덮인 풍부한 토륨 광맥",
+	["Dark Iron Deposit"] = "검은 무쇠 광맥",
+	
 	-- Categories
 	["Consumable"] = "소비용품",
 	["Gear"] = "장비",
 	["GearSet"] = "세트장비",
 	["InstanceLoot"] = "던전획득",
-	["InstanceLootHeroic"] = "영웅던전획득",
 	["Misc"] = "기타",
 	["QuestMats"] = "퀘스트재료",
 	["Reagent"] = "재료",
 	["Tradeskill"] = "전문기술",
 	
-	["Badge of Justice"] = "정의의 휘장",
-	["G'eras"] = "게라스",
-	["Smith Hauthaa"] = "대장장이 하우타",
 	["Trash Mobs"] = "일반몹",
-
-	-- Timed Reward Chest
-	["Timed Reward Chest1"] = "줄아만 첫번째 공물함",
-	["Timed Reward Chest2"] = "줄아만 두번째 공물함",
-	["Timed Reward Chest3"] = "줄아만 세번째 공물함",
-	["Timed Reward Chest4"] = "줄아만 네번째 공물함",
-
-	["Poisons"] = "독 조제",
 }end)

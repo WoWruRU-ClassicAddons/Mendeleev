@@ -228,10 +228,6 @@ MENDELEEV_SETS = {
 		sets = {
 			["Misc.Container.ItemsInType.Herb"] = L["SPECIALBAG_HERB"],
 			["Misc.Container.ItemsInType.Enchanting"] = L["SPECIALBAG_ENCHANTING"],
-			["Misc.Container.ItemsInType.Engineering"] = L["SPECIALBAG_ENGINEERING"],
-			["Misc.Container.ItemsInType.Gem"] = L["SPECIALBAG_GEM"],
-			["Misc.Container.ItemsInType.Leatherworking"] = L["SPECIALBAG_LEATHERWORKING"],
-			["Misc.Container.ItemsInType.Mining"] = L["SPECIALBAG_MINING"],
 			["Misc.Container.ItemsInType.Soul Shard"] = L["SPECIALBAG_SOULSHARD"],
 		},
 	},

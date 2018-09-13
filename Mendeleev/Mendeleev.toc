@@ -9,19 +9,19 @@
 ## Notes-ruRU: Добавляет в подсказки предметов различную информацию, основанную на PeriodicTable.
 ## Notes-zhCN: 在提示中显示物品的详细信息，包括掉落位置、声望要求、用途等。基于 PeriodicTable。
 ## Notes-zhTW: 在提示中顯示物品的詳細資訊，包括掉落位置、聲望要求、用途等。基於 PeriodicTable。
-## Author: Rabbit
-## X-Credits: MoonWolf for the orginal PT1-based version, Kemayo, Elkano, Nymbia (PT3).
+## Author: Lichery
+## X-Credits: MoonWolf for the orginal PT1-based version, Kemayo, Elkano, Nymbia (PT3), Rabbit - author 7.0.3 version
 ## OptionalDeps: Ace3, LibBabble-Boss-3.0, LibBabble-Zone-3.0, LibPeriodicTable-3.1, AtlasLoot
 ## X-Category: Inventory
-## SavedVariables: MendeleevDB, bankItemCache
+## SavedVariables: MendeleevDB, ItemCache
 ## X-Email: rabbit.magtheridon@gmail.com
-## X-Curse-Packaged-Version: r332
+## X-Curse-Packaged-Version: r333
 ## X-Curse-Project-Name: Mendeleev
 ## X-Curse-Project-ID: mendeleev
 ## X-Curse-Repository-ID: wow/mendeleev/mainline
 
-## X-Revision: 332
-## X-Date: 2016-07-27T06:20:21Z
+## X-Revision: 333
+## X-Date: 2018-09-13
 
 
 compatibility\luaAPI.lua

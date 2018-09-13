@@ -9,6 +9,9 @@ local _G = getfenv(0)
 local cache = {}
 
 Mendeleev = AceLibrary("AceAddon-2.0"):new("AceConsole-2.0", "AceDB-2.0", "AceHook-2.1", "AceEvent-2.0")
+local realm = GetRealmName()
+local playerName = UnitName('player')
+
 local Mendeleev     = Mendeleev
 local GetItemCount  = GetItemCount
 local GetItemIcon   = GetItemIcon
@@ -43,12 +46,28 @@ local options = {
 			order = 2,
 		},
 		showItemCount = {
-			type = "toggle",
+			type = "group",
 			name = L["Show item count"],
 			desc = L["Toggle showing the item count in the tooltip."],
-			get = function() return Mendeleev.db.profile.showItemCount end,
-			set = function(v) Mendeleev.db.profile.showItemCount = v end,
 			order = 3,
+			args = {
+				player = {
+					type = "toggle",
+					name = L["On your character"],
+					desc = L["Toggle showing the item count on your character in the tooltip."],
+					order = 1,
+					get = function() return Mendeleev.db.profile.showItemCount.player end,
+					set = function(v) Mendeleev.db.profile.showItemCount.player = v end,
+				},
+				account = {
+					type = "toggle",
+					name = L["On your account"],
+					desc = L["Toggle showing the item count on your account in the tooltip."],
+					order = 2,
+					get = function() return Mendeleev.db.profile.showItemCount.account end,
+					set = function(v) Mendeleev.db.profile.showItemCount.account = v end,
+				},
+			},
 		},
 		showStackSize = {
 			type = "toggle",
@@ -80,7 +99,7 @@ local options = {
 			type = "text",
 			name = L["Minimal skill for 'used in' tree"],
 			desc = L["Minimal skill advance for an item to show up in the 'used in' tree."].."\n\n'-1' - "..skillcolor[-1]..L["TRADESKILL_UNKNOWN"].."|r\n'0' - "..skillcolor[0]..L["TRADESKILL_TRIVIAL"].."|r\n'1' - "..skillcolor[1]..L["TRADESKILL_EASY"].."|r\n'2' - "..skillcolor[2]..L["TRADESKILL_MEDIUM"].."|r\n'3' - "..skillcolor[3]..L["TRADESKILL_OPTIMAL"],
-			values = {[-1] = skillcolor[-1]..L["TRADESKILL_UNKNOWN"].."|r", [0] = skillcolor[0]..L["TRADESKILL_TRIVIAL"].."|r", [1] = skillcolor[1]..L["TRADESKILL_EASY"].."|r", [2] = skillcolor[2]..L["TRADESKILL_MEDIUM"].."|r", [3] = skillcolor[3]..L["TRADESKILL_OPTIMAL"].."|r"},
+			--values = {[-1] = skillcolor[-1]..L["TRADESKILL_UNKNOWN"].."|r", [0] = skillcolor[0]..L["TRADESKILL_TRIVIAL"].."|r", [1] = skillcolor[1]..L["TRADESKILL_EASY"].."|r", [2] = skillcolor[2]..L["TRADESKILL_MEDIUM"].."|r", [3] = skillcolor[3]..L["TRADESKILL_OPTIMAL"].."|r"},
 			usage = "'-1' - "..skillcolor[-1]..L["TRADESKILL_UNKNOWN"].."|r\n'0' - "..skillcolor[0]..L["TRADESKILL_TRIVIAL"].."|r\n'1' - "..skillcolor[1]..L["TRADESKILL_EASY"].."|r\n'2' - "..skillcolor[2]..L["TRADESKILL_MEDIUM"].."|r\n'3' - "..skillcolor[3]..L["TRADESKILL_OPTIMAL"],
 			get = function() return Mendeleev.db.profile.UsedInTreeMinSkill end,
 			set = function(v) Mendeleev.db.profile.UsedInTreeMinSkill = v end,
@@ -90,7 +109,7 @@ local options = {
 			type = "text",
 			name = L["Minimal skill for 'used in' tree (shift)"],
 			desc = L["Minimal skill advance for an item to show up in the 'used in' tree if Shift is held."].."\n\n'-1' - "..skillcolor[-1]..L["TRADESKILL_UNKNOWN"].."|r\n'0' - "..skillcolor[0]..L["TRADESKILL_TRIVIAL"].."|r\n'1' - "..skillcolor[1]..L["TRADESKILL_EASY"].."|r\n'2' - "..skillcolor[2]..L["TRADESKILL_MEDIUM"].."|r\n'3' - "..skillcolor[3]..L["TRADESKILL_OPTIMAL"],
-			values = {[-1] = skillcolor[-1]..L["TRADESKILL_UNKNOWN"].."|r", [0] = skillcolor[0]..L["TRADESKILL_TRIVIAL"].."|r", [1] = skillcolor[1]..L["TRADESKILL_EASY"].."|r", [2] = skillcolor[2]..L["TRADESKILL_MEDIUM"].."|r", [3] = skillcolor[3]..L["TRADESKILL_OPTIMAL"].."|r"},
+			--values = {[-1] = skillcolor[-1]..L["TRADESKILL_UNKNOWN"].."|r", [0] = skillcolor[0]..L["TRADESKILL_TRIVIAL"].."|r", [1] = skillcolor[1]..L["TRADESKILL_EASY"].."|r", [2] = skillcolor[2]..L["TRADESKILL_MEDIUM"].."|r", [3] = skillcolor[3]..L["TRADESKILL_OPTIMAL"].."|r"},
 			usage = "'-1' - "..skillcolor[-1]..L["TRADESKILL_UNKNOWN"].."|r\n'0' - "..skillcolor[0]..L["TRADESKILL_TRIVIAL"].."|r\n'1' - "..skillcolor[1]..L["TRADESKILL_EASY"].."|r\n'2' - "..skillcolor[2]..L["TRADESKILL_MEDIUM"].."|r\n'3' - "..skillcolor[3]..L["TRADESKILL_OPTIMAL"],
 			get = function() return Mendeleev.db.profile.UsedInTreeMinSkillShift end,
 			set = function(v) Mendeleev.db.profile.UsedInTreeMinSkillShift = v end,
@@ -111,7 +130,10 @@ function Mendeleev:OnInitialize()
 	self:RegisterDefaults("profile", {
 		showItemLevel = false,
 		showItemID = false,
-		showItemCount = false,
+		showItemCount = {
+			player = false,
+			account = false,
+		},
 		showStackSize = true,
 		showUsedInTree = true,
 		--UsedInTreeIcons = true,
@@ -433,6 +455,19 @@ function Mendeleev:Tooltip_OnShow(tooltip)
 	tooltip:Show()
 end
 
+local function GetNumEntries(itemID)
+	local s = 0
+	for acc_player in pairs(ItemCache[realm]) do
+		if acc_player ~= playerName then	
+			invCount = ItemCache[realm][acc_player]['Inventory'][itemID]
+			if invCount then
+				s = s + 1
+			end
+		end
+	end
+	return s
+end
+
 function Mendeleev:AddTooltipData(tooltip, item)
 	local id = string.match(item, "^|%x+|Hitem:(%d+):")
 	local _,_,quality,_,_,_,stack = GetItemInfo(id)
@@ -497,11 +532,49 @@ function Mendeleev:AddTooltipData(tooltip, item)
 		end
 	end
 
-	if db.showItemCount then
+	if db.showItemCount.player then
 		local count = GetItemCount(item, false)
-		local bankcount = GetItemCount(item, true) - count
-		if count + bankcount > 0 then
-			tooltip:AddDoubleLine(L["You have"], count..(bankcount > 0 and (" (+"..bankcount..")") or ""))
+		local countIncludeBank = GetItemCount(item, true)
+		if not countIncludeBank then
+			tooltip:AddDoubleLine(L["You have"], count.." (+"..L["N/A"]..")")
+		else
+			local bankcount = countIncludeBank - count
+			if count + bankcount > 0 then
+				tooltip:AddDoubleLine(L["You have"], count..(bankcount > 0 and (" (+"..bankcount..")") or ""))
+			end
+		end
+	end
+
+	if db.showItemCount.account then
+		local header = L["You have on account"]
+		local invCount, bankCount
+		local itemID = tonumber(string.match(tooltip.itemLink, "^|%x+|Hitem:(%d+):"))
+		local entries = GetNumEntries(itemID)
+		
+		for acc_player in pairs(ItemCache[realm]) do
+			if acc_player ~= playerName then
+				invCount = ItemCache[realm][acc_player]['Inventory'][itemID]
+				if invCount then
+					if header then
+						tooltip:AddLine(header)
+						header = nil
+					end
+					if entries > 1 and not IsAltKeyDown() then
+						tooltip:AddLine("   - "..skillcolor[-1].."...|r")
+						break
+					end
+					if not ItemCache[realm][acc_player]['Bank'] then
+						tooltip:AddDoubleLine("   - "..skillcolor[1]..acc_player.."|r", invCount.." (+"..L["N/A"]..")")
+					else
+						bankCount = ItemCache[realm][acc_player]['Bank'][itemID]
+						if bankCount then
+							tooltip:AddDoubleLine("   - "..skillcolor[1]..acc_player.."|r", invCount.." (+"..bankCount..")")
+						else
+							tooltip:AddDoubleLine("   - "..skillcolor[1]..acc_player.."|r", invCount)
+						end
+					end					
+				end
+			end
 		end
 	end
 

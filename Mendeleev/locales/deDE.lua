@@ -25,8 +25,6 @@ L:RegisterTranslations("deDE", function() return {
 	["Minimal skill advance for an item to show up in the 'used in' tree."] = "Mindest-Skill eines Gegenstandes, damit dieser im 'Verwendet in'-Baum angezeigt wird.",
 	["Minimal skill for 'used in' tree (shift)"] = "Mindest-Skill für 'Verwendet in'-Baum (Shift)",
 	["Minimal skill advance for an item to show up in the 'used in' tree if Shift is held."] = "Mindest-Skill eines Gegenstandes (während Shift gedrückt wird), damit dieser im 'Verwendet in'-Baum angezeigt wird.",
-	--["Populate WDB"] = true,
-	--["Populating all items in WDB."] = true,
 	["TRADESKILL_UNKNOWN"] = "unbekannt",
 	["TRADESKILL_TRIVIAL"] = "trivial",
 	["TRADESKILL_EASY"] = "leicht",

@@ -25,8 +25,6 @@ L:RegisterTranslations("zhCN", function() return {
 	["Minimal skill advance for an item to show up in the 'used in' tree."] = "最小化可用商业技能信息并显示当前提示。",
 	["Minimal skill for 'used in' tree (shift)"] = "最小化可用商业技能信息（Shift）",
 	["Minimal skill advance for an item to show up in the 'used in' tree if Shift is held."] = "当按下 Shift 键时最小化可用商业技能信息并显示当前提示。",
-	--["Populate WDB"] = true,
-	--["Populating all items in WDB."] = true,
 	["TRADESKILL_UNKNOWN"] = "未知",
 	["TRADESKILL_TRIVIAL"] = "无价值",
 	["TRADESKILL_EASY"] = "简单",

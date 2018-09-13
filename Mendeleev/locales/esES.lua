@@ -25,8 +25,6 @@ L:RegisterTranslations("esES", function() return {
 	--["Minimal skill advance for an item to show up in the 'used in' tree."] = true,
 	--["Minimal skill for 'used in' tree (shift)"] = true,
 	--["Minimal skill advance for an item to show up in the 'used in' tree if Shift is held."] = true,
-	--["Populate WDB"] = true,
-	--["Populating all items in WDB."] = true,
 	--["TRADESKILL_UNKNOWN"] = true,
 	--["TRADESKILL_TRIVIAL"] = true,
 	--["TRADESKILL_EASY"] = true,

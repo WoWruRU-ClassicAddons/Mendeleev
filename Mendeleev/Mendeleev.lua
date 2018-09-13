@@ -98,9 +98,9 @@ local options = {
 		UsedInTreeMinSkill = {
 			type = "text",
 			name = L["Minimal skill for 'used in' tree"],
-			desc = L["Minimal skill advance for an item to show up in the 'used in' tree."].."\n\n'-1' - "..skillcolor[-1]..L["TRADESKILL_UNKNOWN"].."|r\n'0' - "..skillcolor[0]..L["TRADESKILL_TRIVIAL"].."|r\n'1' - "..skillcolor[1]..L["TRADESKILL_EASY"].."|r\n'2' - "..skillcolor[2]..L["TRADESKILL_MEDIUM"].."|r\n'3' - "..skillcolor[3]..L["TRADESKILL_OPTIMAL"],
-			--values = {[-1] = skillcolor[-1]..L["TRADESKILL_UNKNOWN"].."|r", [0] = skillcolor[0]..L["TRADESKILL_TRIVIAL"].."|r", [1] = skillcolor[1]..L["TRADESKILL_EASY"].."|r", [2] = skillcolor[2]..L["TRADESKILL_MEDIUM"].."|r", [3] = skillcolor[3]..L["TRADESKILL_OPTIMAL"].."|r"},
-			usage = "'-1' - "..skillcolor[-1]..L["TRADESKILL_UNKNOWN"].."|r\n'0' - "..skillcolor[0]..L["TRADESKILL_TRIVIAL"].."|r\n'1' - "..skillcolor[1]..L["TRADESKILL_EASY"].."|r\n'2' - "..skillcolor[2]..L["TRADESKILL_MEDIUM"].."|r\n'3' - "..skillcolor[3]..L["TRADESKILL_OPTIMAL"],
+			desc = L["Minimal skill advance for an item to show up in the 'used in' tree."],
+			validate = {['-1'] = skillcolor[-1]..L["TRADESKILL_UNKNOWN"].."|r", ['0'] = skillcolor[0]..L["TRADESKILL_TRIVIAL"].."|r", ['1'] = skillcolor[1]..L["TRADESKILL_EASY"].."|r", ['2'] = skillcolor[2]..L["TRADESKILL_MEDIUM"].."|r", ['3'] = skillcolor[3]..L["TRADESKILL_OPTIMAL"].."|r"},
+			usage = "",
 			get = function() return Mendeleev.db.profile.UsedInTreeMinSkill end,
 			set = function(v) Mendeleev.db.profile.UsedInTreeMinSkill = v end,
 			order = 7,
@@ -108,19 +108,12 @@ local options = {
 		UsedInTreeMinSkillShift = {
 			type = "text",
 			name = L["Minimal skill for 'used in' tree (shift)"],
-			desc = L["Minimal skill advance for an item to show up in the 'used in' tree if Shift is held."].."\n\n'-1' - "..skillcolor[-1]..L["TRADESKILL_UNKNOWN"].."|r\n'0' - "..skillcolor[0]..L["TRADESKILL_TRIVIAL"].."|r\n'1' - "..skillcolor[1]..L["TRADESKILL_EASY"].."|r\n'2' - "..skillcolor[2]..L["TRADESKILL_MEDIUM"].."|r\n'3' - "..skillcolor[3]..L["TRADESKILL_OPTIMAL"],
-			--values = {[-1] = skillcolor[-1]..L["TRADESKILL_UNKNOWN"].."|r", [0] = skillcolor[0]..L["TRADESKILL_TRIVIAL"].."|r", [1] = skillcolor[1]..L["TRADESKILL_EASY"].."|r", [2] = skillcolor[2]..L["TRADESKILL_MEDIUM"].."|r", [3] = skillcolor[3]..L["TRADESKILL_OPTIMAL"].."|r"},
-			usage = "'-1' - "..skillcolor[-1]..L["TRADESKILL_UNKNOWN"].."|r\n'0' - "..skillcolor[0]..L["TRADESKILL_TRIVIAL"].."|r\n'1' - "..skillcolor[1]..L["TRADESKILL_EASY"].."|r\n'2' - "..skillcolor[2]..L["TRADESKILL_MEDIUM"].."|r\n'3' - "..skillcolor[3]..L["TRADESKILL_OPTIMAL"],
+			desc = L["Minimal skill advance for an item to show up in the 'used in' tree if Shift is held."],
+			validate = {['-1'] = skillcolor[-1]..L["TRADESKILL_UNKNOWN"].."|r", ['0'] = skillcolor[0]..L["TRADESKILL_TRIVIAL"].."|r", ['1'] = skillcolor[1]..L["TRADESKILL_EASY"].."|r", ['2'] = skillcolor[2]..L["TRADESKILL_MEDIUM"].."|r", ['3'] = skillcolor[3]..L["TRADESKILL_OPTIMAL"].."|r"},
+			usage = "",
 			get = function() return Mendeleev.db.profile.UsedInTreeMinSkillShift end,
 			set = function(v) Mendeleev.db.profile.UsedInTreeMinSkillShift = v end,
 			order = 8,
-		},
-		populateWDB = {
-			type = "execute",
-			name = L["Populate WDB"],
-			desc = L["Populating all items in WDB."],
-			func = "PopulateWDB",
-			order = 9,
 		},
 	},
 }
@@ -137,8 +130,8 @@ function Mendeleev:OnInitialize()
 		showStackSize = true,
 		showUsedInTree = true,
 		--UsedInTreeIcons = true,
-		UsedInTreeMinSkill = 0,
-		UsedInTreeMinSkillShift = -1,
+		UsedInTreeMinSkill = '0',
+		UsedInTreeMinSkillShift = '-1',
 		sets = {},
 	})
 
@@ -360,7 +353,10 @@ function Mendeleev:GetUsedInTree(id, history)
 	local skill = id2skill[id] or 0
 	local usedin = self:GetUsedInFullTable(id)
 	if usedin then
-		for k, v in pairs(usedin) do
+		for k in pairs(usedin) do
+			if not GetItemInfo(k) then
+				GameTooltip:SetHyperlink('item:'..k) -- adding an item to the cache!
+			end
 			if string.find(history, ">"..k.."<") then
 				if k < 0 then
 					data[getn(data)+1] = {k, GetSpellInfo(-k) or false, id2skill[k], "..."}
@@ -395,7 +391,7 @@ function Mendeleev:GetUsedInList(tree, level, counttable, countmult)
 	local didpoints = false
 	for i = 4, getn(tree) do
 		local v = tree[i]
-		if v[3] >= UsedInTreeMinSkill then
+		if v[3] >= tonumber(UsedInTreeMinSkill) then
 			if UsedInTreeIcons then
 				local icontag = (v[1] < 0) and select(3, GetSpellInfo(-v[1])) or GetItemIcon(v[1])
 				icontag = icontag and "|T"..icontag..":18|t " or ""
@@ -453,19 +449,6 @@ function Mendeleev:Tooltip_OnShow(tooltip)
 	if tooltip.Mendeleev_data_added or not item then return end
 	self:AddTooltipData(tooltip, item)
 	tooltip:Show()
-end
-
-local function GetNumEntries(itemID)
-	local s = 0
-	for acc_player in pairs(ItemCache[realm]) do
-		if acc_player ~= playerName then	
-			invCount = ItemCache[realm][acc_player]['Inventory'][itemID]
-			if invCount then
-				s = s + 1
-			end
-		end
-	end
-	return s
 end
 
 function Mendeleev:AddTooltipData(tooltip, item)
@@ -549,7 +532,6 @@ function Mendeleev:AddTooltipData(tooltip, item)
 		local header = L["You have on account"]
 		local invCount, bankCount
 		local itemID = tonumber(string.match(tooltip.itemLink, "^|%x+|Hitem:(%d+):"))
-		local entries = GetNumEntries(itemID)
 		
 		for acc_player in pairs(ItemCache[realm]) do
 			if acc_player ~= playerName then
@@ -559,8 +541,8 @@ function Mendeleev:AddTooltipData(tooltip, item)
 						tooltip:AddLine(header)
 						header = nil
 					end
-					if entries > 1 and not IsAltKeyDown() then
-						tooltip:AddLine("   - "..skillcolor[-1].."...|r")
+					if not IsAltKeyDown() then
+						tooltip:AddLine("   - "..skillcolor[1].."...|r")
 						break
 					end
 					if not ItemCache[realm][acc_player]['Bank'] then
@@ -618,15 +600,6 @@ end
 
 function Mendeleev:Tooltip_OnHide(tooltip)
 	tooltip.Mendeleev_data_added = nil
-end
-
-function Mendeleev:PopulateWDB()
-	for item_id = 1, 25818 do
-		local info = GetItemInfo('item:' .. item_id)
-		if not info then
-			GameTooltip:SetHyperlink('item:' .. item_id) -- adding an item to the cache!
-		end
-	end
 end
 
 function Mendeleev:HookLinkFunckions()

@@ -9,6 +9,8 @@ L:RegisterTranslations("ruRU", function() return {
 	["Standard tooltip."] = "Стандартная всплывающая подсказка.",
 	--["ItemRefTooltip"] = true,
 	["Tooltip when opening links from the chat."] = "Подсказка при открытии ссылок из чата.",
+	--["ShoppingTooltip"] = true,
+	["Comparison tooltip."] = "Подсказка сравнения предметов.",
 	["Toggle sets."] = "Модули",
 	["Toggle sets from showing information in the tooltip."] = "Вкл./Выкл. отображение информации модуля в подсказке.",
 	["Toggle sets in the %s category."] = "Вкл./Выкл. комплекты в категории %s",
@@ -31,6 +33,8 @@ L:RegisterTranslations("ruRU", function() return {
 	["Minimal skill advance for an item to show up in the 'used in' tree."] = "Минимальный навык умения для предмета отображаемого в списка 'Используется в'.",
 	["Minimal skill for 'used in' tree (shift)"] = "Минимальный навык для списка 'Используется в' (Shift)",
 	["Minimal skill advance for an item to show up in the 'used in' tree if Shift is held."] = "Минимальный навык умения для предмета отображаемого в списка 'Используется в', при удерживании нажатой клавиши Shift.",
+	["Show item price"] = "Показать цену товара",
+	["Displays the price of the item in the tooltip."] = "Отображает цену предмета в подсказке.",
 	["TRADESKILL_UNKNOWN"] = "Неизвестно",
 	["TRADESKILL_TRIVIAL"] = "Низкий",
 	["TRADESKILL_EASY"] = "Легкий",
@@ -45,7 +49,7 @@ L:RegisterTranslations("ruRU", function() return {
 	
 	["Bought for"] = "Можно приобрести за",
 	["Crafted by"] = "Создается",
-	["Component in"] = "Употребляется в",
+	["Component in"] = "Компонент в",
 	
 	["Recipe source"] = "Источник рецепта",
 	["Lockpicking"] = "Вскрытие замков",

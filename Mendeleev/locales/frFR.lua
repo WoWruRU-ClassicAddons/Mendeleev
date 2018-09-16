@@ -7,6 +7,8 @@ L:RegisterTranslations("frFR", function() return {
 	--["Standard tooltip."] = true,
 	--["ItemRefTooltip"] = true,
 	--["Tooltip when opening links from the chat."] = true,
+	--["ShoppingTooltip"] = true,
+	--["Comparison tooltip."] = true,
 	["Toggle sets."] = "Active ou non les ensembles.",
 	["Toggle sets from showing information in the tooltip."] = "Affiche ou non les informations des ensembles dans la bulle d'aide.",
 	["Toggle sets in the %s category."] = "Affiche ou non les ensembles de la catégorie %s.",
@@ -29,6 +31,8 @@ L:RegisterTranslations("frFR", function() return {
 	--["Minimal skill advance for an item to show up in the 'used in' tree."] = true
 	["Minimal skill for 'used in' tree (shift)"] = "Compétence minimale pour l'arbre 'Utilisé pour' (shift)",
 	--["Minimal skill advance for an item to show up in the 'used in' tree if Shift is held."] = true
+	--["Show item price"] = true,
+	--["Displays the price of the item in the tooltip."] = true,
 	["TRADESKILL_UNKNOWN"] = "inconnu",
 	["TRADESKILL_TRIVIAL"] = "trivial",
 	["TRADESKILL_EASY"] = "facile",

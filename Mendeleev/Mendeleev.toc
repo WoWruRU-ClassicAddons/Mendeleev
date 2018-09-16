@@ -15,13 +15,13 @@
 ## X-Category: Inventory
 ## SavedVariables: MendeleevDB, ItemCache
 ## X-Email: rabbit.magtheridon@gmail.com
-## X-Curse-Packaged-Version: r335
+## X-Curse-Packaged-Version: r336
 ## X-Curse-Project-Name: Mendeleev
 ## X-Curse-Project-ID: mendeleev
 ## X-Curse-Repository-ID: wow/mendeleev/mainline
 
-## X-Revision: 335
-## X-Date: 2018-09-13
+## X-Revision: 336
+## X-Date: 2018-09-17
 
 
 compatibility\luaAPI.lua
@@ -46,3 +46,4 @@ Set_Instances_Classic_low.lua
 Set_Instances_Classic_high.lua
 Mendeleev.lua
 ItemLevelsDB.lua
+ItemPricesDB.lua

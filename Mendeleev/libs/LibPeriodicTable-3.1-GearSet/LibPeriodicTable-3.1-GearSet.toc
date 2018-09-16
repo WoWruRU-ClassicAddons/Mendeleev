@@ -1,9 +1,9 @@
-﻿## Interface: 20300
+﻿## Interface: 11200
 ## LoadOnDemand: 1
 ## Title: Lib: Periodic Table 3.1 [|cffeda55fGearSet|r]
 ## Notes: PeriodicTable data module.
 ## Author: Nymbia
-## Version: 3.1
+## Version: 3.1.11200
 ## Dependencies: LibPeriodicTable-3.1
 ## X-Category: Library
 ## X-License: LGPL v2.1

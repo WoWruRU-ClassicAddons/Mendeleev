@@ -1,6 +1,12 @@
 local L = AceLibrary("AceLocale-2.2"):new("Mendeleev")
 
 L:RegisterTranslations("zhCN", function() return {
+	--["Hoverlink"] = true,
+	--["Enable display tooltip while hovering hyperlink in ChatFrame."] = true,
+	--["GameTooltip"] = true,
+	--["Standard tooltip."] = true,
+	--["ItemRefTooltip"] = true,
+	--["Tooltip when opening links from the chat."] = true,
 	["Toggle sets."] = "切换显示类别。",
 	["Toggle sets from showing information in the tooltip."] = "指定是否在提示信息上显示类别信息。",
 	["Toggle sets in the %s category."] = "切换显示 %s 类别。",
@@ -9,11 +15,9 @@ L:RegisterTranslations("zhCN", function() return {
 	["Toggle showing the item level in the tooltip."] = "指定是否在提示信息上显示物品等级。",
 	["Show item identifier"] = "显示物品 ID",
 	["Toggle showing the item identifier in the tooltip."] = "指定是否在提示信息上显示物品 ID。",
-	["Show item count"] = "显示物品数量",
-	["Toggle showing the item count in the tooltip."] = "指定是否在提示信息中显示物品数量。",
-	--["On your character"] = true,
+	--["Show item count on your character"] = true,
 	--["Toggle showing the item count on your character in the tooltip."] = true,
-	--["On your account"] = true,
+	--["Show item count on your account"] = true,
 	--["Toggle showing the item count on your account in the tooltip."] = true,
 	["Show stack size"] = "显示堆叠数量",
 	["Toggle showing the stack size in the tooltip."] = "指定是否在提示信息上显示堆叠数量。",

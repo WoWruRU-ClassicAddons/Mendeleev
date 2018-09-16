@@ -1,6 +1,12 @@
 local L = AceLibrary("AceLocale-2.2"):new("Mendeleev")
 
 L:RegisterTranslations("koKR", function() return {
+	--["Hoverlink"] = true,
+	--["Enable display tooltip while hovering hyperlink in ChatFrame."] = true,
+	--["GameTooltip"] = true,
+	--["Standard tooltip."] = true,
+	--["ItemRefTooltip"] = true,
+	--["Tooltip when opening links from the chat."] = true,
 	["Toggle sets."] = "세트 보기/숨기기",
 	["Toggle sets from showing information in the tooltip."] = "툴팁에 표시되는 정보에 세트를 보이거나 숨깁니다.",
 	["Toggle sets in the %s category."] = "%s 분류에 세트를 보이거나 숨깁니다.",
@@ -9,11 +15,9 @@ L:RegisterTranslations("koKR", function() return {
 	["Toggle showing the item level in the tooltip."] = "툴팁에 아이템 등급을 표시합니다.",
 	["Show item identifier"] = "아이템 식별자 표시",
 	["Toggle showing the item identifier in the tooltip."] = "툴팁에 아이템 식별자를 표시합니다.",
-	["Show item count"] = "아이템 개수 보이기",
-	["Toggle showing the item count in the tooltip."] = "툴팁에 아이템 개수를 표시합니다.",
-	--["On your character"] = true,
+	--["Show item count on your character"] = true,
 	--["Toggle showing the item count on your character in the tooltip."] = true,
-	--["On your account"] = true,
+	--["Show item count on your account"] = true,
 	--["Toggle showing the item count on your account in the tooltip."] = true,
 	["Show stack size"] = "묶음 크기 표시",
 	["Toggle showing the stack size in the tooltip."] = "툴팁에 묶음 크기를 표시합니다.",

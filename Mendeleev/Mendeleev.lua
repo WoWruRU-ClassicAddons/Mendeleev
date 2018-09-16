@@ -12,108 +12,110 @@ Mendeleev = AceLibrary("AceAddon-2.0"):new("AceConsole-2.0", "AceDB-2.0", "AceHo
 local realm = GetRealmName()
 local playerName = UnitName('player')
 
-local Mendeleev     = Mendeleev
-local GetItemCount  = GetItemCount
-local GetItemIcon   = GetItemIcon
-local GetItemInfo   = GetItemInfo
-local GetSpellInfo  = GetSpellInfo
-
 local skillcolor = {
-	[-1] = "|cffff0000", -- unknown
-	[0] = "|cff7f7f7f", -- trival
+	[-1] = "|cffff0000",
+	[0] = "|cff7f7f7f",
 	[1] = "|cff3fbf3f",
 	[2] = "|cffffff00",
 	[3] = "|cffff7f3f",
 }
 
+local function GetItemLink(obj)
+	local itemID = tonumber(string.match(obj, "item:(%d+):"))
+	if not itemID then
+		for iterateID = 1, 25818 do
+			local itemName = GetItemInfo(iterateID)
+			if itemName and itemName == name then
+				itemID = iterateID
+			end
+		end
+	end
+	local itemName, hyperLink, itemQuality = GetItemInfo(itemID)
+	local hex = select(4, GetItemQualityColor(tonumber(itemQuality)))
+	return hex.. "|H"..hyperLink.."|h["..itemName.."]|h|r"
+end
+
 local options = {
 	type = "group",
 	args = {
-		showItemLevel = {
+		hoverLink = {
 			type = "toggle",
-			name = L["Show item level"],
-			desc = L["Toggle showing the item level in the tooltip."],
-			get = function() return Mendeleev.db.profile.showItemLevel end,
-			set = function(v) Mendeleev.db.profile.showItemLevel = v end,
+			name = L["Hoverlink"],
+			desc = L["Enable display tooltip while hovering hyperlink in ChatFrame."],
+			get = function() return Mendeleev.db.profile.hoverLink end,
+			set = function(v)
+				Mendeleev.db.profile.hoverLink = v
+				Mendeleev:HoverHyperlink_Toggle()
+			end,
 			order = 1,
 		},
-		showItemID = {
-			type = "toggle",
-			name = L["Show item identifier"],
-			desc = L["Toggle showing the item identifier in the tooltip."],
-			get = function() return Mendeleev.db.profile.showItemID end,
-			set = function(v) Mendeleev.db.profile.showItemID = v end,
-			order = 2,
-		},
-		showItemCount = {
+		GameTooltip = {
 			type = "group",
-			name = L["Show item count"],
-			desc = L["Toggle showing the item count in the tooltip."],
-			order = 3,
+			name = L["GameTooltip"],
+			desc = L["Standard tooltip."],
+			order = 2,
 			args = {
-				player = {
+				showAccountItemCount = {
 					type = "toggle",
-					name = L["On your character"],
-					desc = L["Toggle showing the item count on your character in the tooltip."],
-					order = 1,
-					get = function() return Mendeleev.db.profile.showItemCount.player end,
-					set = function(v) Mendeleev.db.profile.showItemCount.player = v end,
-				},
-				account = {
-					type = "toggle",
-					name = L["On your account"],
+					name = L["Show item count on your account"],
 					desc = L["Toggle showing the item count on your account in the tooltip."],
-					order = 2,
-					get = function() return Mendeleev.db.profile.showItemCount.account end,
-					set = function(v) Mendeleev.db.profile.showItemCount.account = v end,
+					order = 5,
+					get = function() return Mendeleev.db.profile.GameTooltip.showAccountItemCount end,
+					set = function(v) Mendeleev.db.profile.GameTooltip.showAccountItemCount = v end,
+				},
+				showUsedInTree = {
+					type = "toggle",
+					name = L["Show 'used in' tree"],
+					desc = L["Toggle showing the 'used in' tree in the tooltip."],
+					get = function() return Mendeleev.db.profile.GameTooltip.showUsedInTree end,
+					set = function(v) Mendeleev.db.profile.GameTooltip.showUsedInTree = v end,
+					order = 6,
+				},
+				--[[
+					UsedInTreeIcons = { --?
+					type = "toggle",
+					name = L["Show icons in 'used in' tree"],
+					desc = L["Toggle showing of icons in the 'used in' tree."],
+					get = function() return Mendeleev.db.profile.GameTooltip.UsedInTreeIcons end,
+					set = function(v) Mendeleev.db.profile.GameTooltip.UsedInTreeIcons = v end,
+					order = 7,
+					},
+				--]]
+				UsedInTreeMinSkill = {
+					type = "text",
+					name = L["Minimal skill for 'used in' tree"],
+					desc = L["Minimal skill advance for an item to show up in the 'used in' tree."],
+					validate = {['-1'] = skillcolor[-1]..L["TRADESKILL_UNKNOWN"].."|r", ['0'] = skillcolor[0]..L["TRADESKILL_TRIVIAL"].."|r", ['1'] = skillcolor[1]..L["TRADESKILL_EASY"].."|r", ['2'] = skillcolor[2]..L["TRADESKILL_MEDIUM"].."|r", ['3'] = skillcolor[3]..L["TRADESKILL_OPTIMAL"].."|r"},
+					usage = "",
+					get = function() return Mendeleev.db.profile.GameTooltip.UsedInTreeMinSkill end,
+					set = function(v) Mendeleev.db.profile.GameTooltip.UsedInTreeMinSkill = v end,
+					order = 8,
+				},
+				UsedInTreeMinSkillShift = {
+					type = "text",
+					name = L["Minimal skill for 'used in' tree (shift)"],
+					desc = L["Minimal skill advance for an item to show up in the 'used in' tree if Shift is held."],
+					validate = {['-1'] = skillcolor[-1]..L["TRADESKILL_UNKNOWN"].."|r", ['0'] = skillcolor[0]..L["TRADESKILL_TRIVIAL"].."|r", ['1'] = skillcolor[1]..L["TRADESKILL_EASY"].."|r", ['2'] = skillcolor[2]..L["TRADESKILL_MEDIUM"].."|r", ['3'] = skillcolor[3]..L["TRADESKILL_OPTIMAL"].."|r"},
+					usage = "",
+					get = function() return Mendeleev.db.profile.GameTooltip.UsedInTreeMinSkillShift end,
+					set = function(v) Mendeleev.db.profile.GameTooltip.UsedInTreeMinSkillShift = v end,
+					order = 9,
 				},
 			},
 		},
-		showStackSize = {
-			type = "toggle",
-			name = L["Show stack size"],
-			desc = L["Toggle showing the stack size in the tooltip."],
-			get = function() return Mendeleev.db.profile.showStackSize end,
-			set = function(v) Mendeleev.db.profile.showStackSize = v end,
+		ItemRefTooltip = {
+			type = "group",
+			name = L["ItemRefTooltip"],
+			desc = L["Tooltip when opening links from the chat."],
+			order = 3,
+			args = {},
+		},
+		sets = {
+			name = L["Toggle sets."],
+			desc = L["Toggle sets from showing information in the tooltip."],
+			type = "group",
 			order = 4,
-		},
-		showUsedInTree = {
-			type = "toggle",
-			name = L["Show 'used in' tree"],
-			desc = L["Toggle showing the 'used in' tree in the tooltip."],
-			get = function() return Mendeleev.db.profile.showUsedInTree end,
-			set = function(v) Mendeleev.db.profile.showUsedInTree = v end,
-			order = 5,
-		},
-		--[[
-		UsedInTreeIcons = { --?
-			type = "toggle",
-			name = L["Show icons in 'used in' tree"],
-			desc = L["Toggle showing of icons in the 'used in' tree."],
-			get = function() return Mendeleev.db.profile.UsedInTreeIcons end,
-			set = function(v) Mendeleev.db.profile.UsedInTreeIcons = v end,
-			order = 6,
-		},
-		--]]
-		UsedInTreeMinSkill = {
-			type = "text",
-			name = L["Minimal skill for 'used in' tree"],
-			desc = L["Minimal skill advance for an item to show up in the 'used in' tree."],
-			validate = {['-1'] = skillcolor[-1]..L["TRADESKILL_UNKNOWN"].."|r", ['0'] = skillcolor[0]..L["TRADESKILL_TRIVIAL"].."|r", ['1'] = skillcolor[1]..L["TRADESKILL_EASY"].."|r", ['2'] = skillcolor[2]..L["TRADESKILL_MEDIUM"].."|r", ['3'] = skillcolor[3]..L["TRADESKILL_OPTIMAL"].."|r"},
-			usage = "",
-			get = function() return Mendeleev.db.profile.UsedInTreeMinSkill end,
-			set = function(v) Mendeleev.db.profile.UsedInTreeMinSkill = v end,
-			order = 7,
-		},
-		UsedInTreeMinSkillShift = {
-			type = "text",
-			name = L["Minimal skill for 'used in' tree (shift)"],
-			desc = L["Minimal skill advance for an item to show up in the 'used in' tree if Shift is held."],
-			validate = {['-1'] = skillcolor[-1]..L["TRADESKILL_UNKNOWN"].."|r", ['0'] = skillcolor[0]..L["TRADESKILL_TRIVIAL"].."|r", ['1'] = skillcolor[1]..L["TRADESKILL_EASY"].."|r", ['2'] = skillcolor[2]..L["TRADESKILL_MEDIUM"].."|r", ['3'] = skillcolor[3]..L["TRADESKILL_OPTIMAL"].."|r"},
-			usage = "",
-			get = function() return Mendeleev.db.profile.UsedInTreeMinSkillShift end,
-			set = function(v) Mendeleev.db.profile.UsedInTreeMinSkillShift = v end,
-			order = 8,
+			args = {},
 		},
 	},
 }
@@ -121,28 +123,63 @@ local options = {
 function Mendeleev:OnInitialize()
 	self:RegisterDB("MendeleevDB")
 	self:RegisterDefaults("profile", {
-		showItemLevel = false,
-		showItemID = false,
-		showItemCount = {
-			player = false,
-			account = false,
+		hoverLink = false,
+		GameTooltip = {
+			showItemLevel = false,
+			showItemID = false,
+			showAccountItemCount = false,
+			showPlayerItemCount = false,
+			showStackSize = true,
+			showUsedInTree = true,
+			--UsedInTreeIcons = true,
+			UsedInTreeMinSkill = '0',
+			UsedInTreeMinSkillShift = '-1',
 		},
-		showStackSize = true,
-		showUsedInTree = true,
-		--UsedInTreeIcons = true,
-		UsedInTreeMinSkill = '0',
-		UsedInTreeMinSkillShift = '-1',
+		ItemRefTooltip = {
+			showItemLevel = false,
+			showItemID = false,
+			showPlayerItemCount = false,
+			showStackSize = true,
+		},
 		sets = {},
 	})
-
-	options.args.sets = {
-		name = L["Toggle sets."],
-		desc = L["Toggle sets from showing information in the tooltip."],
-		type = "group",
-		order = 10,
-		args = {},
-	}
-
+	
+	for _, v in pairs({"GameTooltip", "ItemRefTooltip"}) do
+		local tooltip = v
+		options.args[tooltip].args.showItemLevel = {
+			type = "toggle",
+			name = L["Show item level"],
+			desc = L["Toggle showing the item level in the tooltip."],
+			get = function() return Mendeleev.db.profile[tooltip].showItemLevel end,
+			set = function(v) Mendeleev.db.profile[tooltip].showItemLevel = v end,
+			order = 1,
+		}
+		options.args[tooltip].args.showItemID = {
+			type = "toggle",
+			name = L["Show item identifier"],
+			desc = L["Toggle showing the item identifier in the tooltip."],
+			get = function() return Mendeleev.db.profile[tooltip].showItemID end,
+			set = function(v) Mendeleev.db.profile[tooltip].showItemID = v end,
+			order = 2,
+		}
+		options.args[tooltip].args.showStackSize = {
+			type = "toggle",
+			name = L["Show stack size"],
+			desc = L["Toggle showing the stack size in the tooltip."],
+			get = function() return Mendeleev.db.profile[tooltip].showStackSize end,
+			set = function(v) Mendeleev.db.profile[tooltip].showStackSize = v end,
+			order = 3,
+		}
+		options.args[tooltip].args.showPlayerItemCount = {
+			type = "toggle",
+			name = L["Show item count on your character"],
+			desc = L["Toggle showing the item count on your character in the tooltip."],
+			order = 4,
+			get = function() return Mendeleev.db.profile[tooltip].showPlayerItemCount end,
+			set = function(v) Mendeleev.db.profile[tooltip].showPlayerItemCount = v end,
+		}
+	end
+	
 	for _, v in ipairs(MENDELEEV_SETS) do
 		local key = v.setindex
 		local parent = string.match(key, "^([^%.]*)")
@@ -171,15 +208,17 @@ end
 
 local firstLoad = true
 function Mendeleev:OnEnable()
-	self:HookLinkFunckions()
+	self:HookLinkFunctions()
+	self:HoverHyperlink_Toggle()
+	self:Hook("SetItemRef")
 	self:HookScript(GameTooltip, "OnShow", "Tooltip_OnShow")
 	self:HookScript(GameTooltip, "OnHide", "Tooltip_OnHide")
 	self:HookScript(ItemRefTooltip, "OnShow", "Tooltip_OnShow")
 	self:HookScript(ItemRefTooltip, "OnHide", "Tooltip_OnHide")
-	self:HookScript(ShoppingTooltip1, "OnShow", "Tooltip_OnShow")
-	self:HookScript(ShoppingTooltip1, "OnHide", "Tooltip_OnHide")
-	self:HookScript(ShoppingTooltip2, "OnShow", "Tooltip_OnShow")
-	self:HookScript(ShoppingTooltip2, "OnHide", "Tooltip_OnHide")
+--	self:HookScript(ShoppingTooltip1, "OnShow", "Tooltip_OnShow")
+--	self:HookScript(ShoppingTooltip1, "OnHide", "Tooltip_OnHide")
+--	self:HookScript(ShoppingTooltip2, "OnShow", "Tooltip_OnShow")
+--	self:HookScript(ShoppingTooltip2, "OnHide", "Tooltip_OnHide")
 	
 	if firstLoad then
 		-- load our sets into the cache
@@ -189,13 +228,19 @@ function Mendeleev:OnEnable()
 		collectgarbage()
 		firstLoad = nil
 	end
-
+	
 	self:RegisterEvent("TRADE_SKILL_SHOW", "ScanTradeSkill")
 	self:RegisterEvent("CRAFT_SHOW", "ScanTradeSkill")
 end
 
--- function Mendeleev:OnDisable()
--- end
+function Mendeleev:OnDisable()
+	self:UnregisterAllEvents()
+	self:Unhook("SetItemRef")
+	self:Unhook(GameTooltip, "OnShow")
+	self:Unhook(GameTooltip, "OnHide")
+	self:Unhook(ItemRefTooltip, "OnShow")
+	self:Unhook(ItemRefTooltip, "OnHide")
+end
 
 function Mendeleev:GetUsedInTable(skill, reagentid)
 	local ret
@@ -217,7 +262,7 @@ function Mendeleev:GetUsedInTable(skill, reagentid)
 				end
 			end
 		end
-	else
+		else
 		local usedin = ptrmr and ptrmr[tonumber(reagentid)]
 		if usedin then
 			for item, num in string.gmatch(usedin, "(%-?%d+)x(%d+)") do
@@ -247,8 +292,6 @@ local tradeskillNames = {
 	["Engineering.Gnomish"] = BTS["Gnomish Engineering"],
 	["Engineering.Goblin"] = BTS["Goblin Engineering"],
 	["First Aid"] = BTS["First Aid"],
-	--["Inscription"] = GetSpellInfo(45357),
-	["Jewelcrafting"] = BTS["Jewelcrafting"],
 	["Leatherworking.Basic"] = BTS["Leatherworking"],
 	["Leatherworking.Dragonscale"] = BTS["Dragonscale Leatherworking"],
 	["Leatherworking.Elemental"] = BTS["Elemental Leatherworking"],
@@ -292,8 +335,6 @@ local tradeskills = {
 	"Engineering.Gnomish",
 	"Engineering.Goblin",
 	"First Aid",
-	--"Inscription",
-	"Jewelcrafting",
 	"Leatherworking.Basic",
 	"Leatherworking.Dragonscale",
 	"Leatherworking.Elemental",
@@ -310,31 +351,31 @@ local function SortUsedInTree(a,b)
 	if (not a or not b) then
 		return true
 	end
--- 3 -> skill
+	-- 3 -> skill
 	if (a[3] > b[3]) then
 		return true
 	end
 	if (a[3] < b[3]) then
 		return false
 	end
--- 2 -> name
+	-- 2 -> name
 	if (a[2] and (not b[2] or a[2] < b[2])) then
 		return true
 	end
 	if b[2] then -- not a[2] or a[2] > b[2]
 		return false
 	end
--- 1 -> id
+	-- 1 -> id
 	return a[1] < b[1]
 end
 
 function Mendeleev:GetUsedInFullTable(id)
-	if cacheUsedInFull[id] == nil then
+	if not cacheUsedInFull[id] then
 		for _, skill in ipairs(tradeskills) do
 			local usedin = self:GetUsedInTable(skill, id)
 			if usedin then
 				for item, num in pairs(usedin) do
-					 if not cacheUsedInFull[id] then 
+					if not cacheUsedInFull[id] then 
 						cacheUsedInFull[id] = {}
 					end
 					cacheUsedInFull[id][item] = num
@@ -360,10 +401,10 @@ function Mendeleev:GetUsedInTree(id, history)
 			if string.find(history, ">"..k.."<") then
 				if k < 0 then
 					data[getn(data)+1] = {k, GetSpellInfo(-k) or false, id2skill[k], "..."}
-				else
+					else
 					data[getn(data)+1] = {k, GetItemInfo(k) or false, id2skill[k], "..."}
 				end
-			else
+				else
 				local tdata, tskill = self:GetUsedInTree(k, history..">"..k.."<")
 				if tskill > skill then
 					skill = tskill
@@ -376,7 +417,7 @@ function Mendeleev:GetUsedInTree(id, history)
 	table.insert(data, 1, id)
 	if id < 0 then
 		table.insert(data, 2, GetSpellInfo(-id) or false)
-	else
+		else
 		table.insert(data, 2, GetItemInfo(id) or false)
 	end
 	table.insert(data, 3, skill)
@@ -384,9 +425,9 @@ function Mendeleev:GetUsedInTree(id, history)
 end
 
 function Mendeleev:GetUsedInList(tree, level, counttable, countmult)
-	local UsedInTreeIcons         = self.db.profile.UsedInTreeIcons
-	local UsedInTreeMinSkill      = IsShiftKeyDown() and self.db.profile.UsedInTreeMinSkillShift or self.db.profile.UsedInTreeMinSkill
-
+	local UsedInTreeIcons         = self.db.profile.GameTooltip.UsedInTreeIcons
+	local UsedInTreeMinSkill      = IsShiftKeyDown() and self.db.profile.GameTooltip.UsedInTreeMinSkillShift or self.db.profile.GameTooltip.UsedInTreeMinSkill
+	
 	local list = {}
 	local didpoints = false
 	for i = 4, getn(tree) do
@@ -397,7 +438,7 @@ function Mendeleev:GetUsedInList(tree, level, counttable, countmult)
 				icontag = icontag and "|T"..icontag..":18|t " or ""
 				--icontag = icontag and '<HTML><BODY><IMG src="'..icontag..'"/></BODY></HTML>' or ""
 				list[getn(list)+1] = string.rep("    ", level).."- "..skillcolor[id2skill[v[1]] or -1]..icontag..(v[2] or ((v[1] < 0) and ("spell:"..(-v[1])) or ("item:"..v[1]))).."|r"
-			else
+				else
 				list[getn(list)+1] = string.rep("    ", level).."- "..skillcolor[id2skill[v[1]] or -1]..(v[2] or ((v[1] < 0) and ("spell:"..(-v[1])) or ("item:"..v[1]))).."|r"
 			end
 			list[getn(list)+1] = countmult * counttable[v[1]]
@@ -408,11 +449,11 @@ function Mendeleev:GetUsedInList(tree, level, counttable, countmult)
 						list[getn(list)+1] = line
 					end
 				end
-			elseif v[4] == "..." then
+				elseif v[4] == "..." then
 				list[getn(list)+1] = string.rep("    ", level+1).."..."
 				list[getn(list)+1] = ""
 			end
-		elseif not didpoints then
+			elseif not didpoints then
 			list[getn(list)+1] = string.rep("    ", level).."- "..skillcolor[v[3]].."...|r"
 			list[getn(list)+1] = ""
 			didpoints = true
@@ -430,11 +471,11 @@ function Mendeleev:ScanTradeSkill()
 	end
 	if _G[frame.."Frame"] and _G[frame.."Frame"]:IsShown() then
 		for i=1, _G["GetNum"..frame.."s"]() do
-			local _, type, _, _ = _G["Get"..frame.."Info"](i)
+			local type = select(2, _G["Get"..frame.."Info"](i))
 			if type ~= "header" then
 				local item = _G["Get"..frame.."ItemLink"](i)
 				if item then
-				local id = tonumber(string.match(item, "item:(%d+)")) or -tonumber(string.match(item, "enchant:(%d+)"))
+					local id = tonumber(string.match(item, "item:(%d+)")) or -tonumber(string.match(item, "enchant:(%d+)"))
 					if id then
 						id2skill[id] = skillquals[type]
 					end
@@ -452,11 +493,11 @@ function Mendeleev:Tooltip_OnShow(tooltip)
 end
 
 function Mendeleev:AddTooltipData(tooltip, item)
-	local id = string.match(item, "^|%x+|Hitem:(%d+):")
-	local _,_,quality,_,_,_,stack = GetItemInfo(id)
+	local id = tonumber(string.match(item, "^|%x+|Hitem:(%d+):"))
+	local quality,_,_,_,stack,itemSlot = select(3, GetItemInfo(id))
 	local db = self.db.profile
-
-	if cache[item] == nil then
+	
+	if not cache[item] then
 		local cachetable
 		for _,v in ipairs(MENDELEEV_SETS) do
 			if not db.sets[v.setindex] and quality >= v.quality then
@@ -472,10 +513,10 @@ function Mendeleev:AddTooltipData(tooltip, item)
 								for i, v in ipairs(ret) do
 									lines[getn(lines)+1] = c .. ret[i] .. "|r"
 								end
-							elseif type(ret) == "string" then
+								elseif type(ret) == "string" then
 								lines[getn(lines)+1] = c .. ret .. "|r"
 							end
-						else
+							else
 							lines[getn(lines)+1] = c .. desc .. (type(val) ~= "boolean" and v.useval and v.useval(val) or "") .. "|r"
 						end
 					end
@@ -495,11 +536,11 @@ function Mendeleev:AddTooltipData(tooltip, item)
 			table.sort(indextable)
 			cachetable["_index"] = indextable
 			cache[item] = cachetable
-		else
+			else
 			cache[item] = false
 		end
 	end
-
+	
 	if cache[item] then
 		for _, k in ipairs(cache[item]["_index"]) do
 			local v = cache[item][k]
@@ -508,34 +549,33 @@ function Mendeleev:AddTooltipData(tooltip, item)
 				if first == 1 then
 					tooltip:AddDoubleLine(v[1], line)
 					first = 0
-				else
+					else
 					tooltip:AddDoubleLine(" ", line)
 				end
 			end
 		end
 	end
-
-	if db.showItemCount.player then
+	
+	if db[tooltip:GetName()].showPlayerItemCount then
 		local count = GetItemCount(item, false)
 		local countIncludeBank = GetItemCount(item, true)
 		if not countIncludeBank then
 			tooltip:AddDoubleLine(L["You have"], count.." (+"..L["N/A"]..")")
-		else
+			else
 			local bankcount = countIncludeBank - count
 			if count + bankcount > 0 then
 				tooltip:AddDoubleLine(L["You have"], count..(bankcount > 0 and (" (+"..bankcount..")") or ""))
 			end
 		end
 	end
-
-	if db.showItemCount.account then
+	
+	if tooltip ~= ItemRefTooltip and db[tooltip:GetName()].showAccountItemCount then
 		local header = L["You have on account"]
 		local invCount, bankCount
-		local itemID = tonumber(string.match(tooltip.itemLink, "^|%x+|Hitem:(%d+):"))
 		
 		for acc_player in pairs(ItemCache[realm]) do
 			if acc_player ~= playerName then
-				invCount = ItemCache[realm][acc_player]['Inventory'][itemID]
+				invCount = ItemCache[realm][acc_player]['Inventory'][id]
 				if invCount then
 					if header then
 						tooltip:AddLine(header)
@@ -547,11 +587,11 @@ function Mendeleev:AddTooltipData(tooltip, item)
 					end
 					if not ItemCache[realm][acc_player]['Bank'] then
 						tooltip:AddDoubleLine("   - "..skillcolor[1]..acc_player.."|r", invCount.." (+"..L["N/A"]..")")
-					else
-						bankCount = ItemCache[realm][acc_player]['Bank'][itemID]
+						else
+						bankCount = ItemCache[realm][acc_player]['Bank'][id]
 						if bankCount then
 							tooltip:AddDoubleLine("   - "..skillcolor[1]..acc_player.."|r", invCount.." (+"..bankCount..")")
-						else
+							else
 							tooltip:AddDoubleLine("   - "..skillcolor[1]..acc_player.."|r", invCount)
 						end
 					end					
@@ -559,30 +599,24 @@ function Mendeleev:AddTooltipData(tooltip, item)
 			end
 		end
 	end
-
-	if stack and stack > 1 and db.showStackSize then
+	
+	if stack and stack > 1 and db[tooltip:GetName()].showStackSize then
 		tooltip:AddDoubleLine(L["Stacksize"], stack)
 	end
-
-	if db.showItemID then
-		local id = string.match(item, "^|%x+|Hitem:(%d+):")
-		if id then
-			tooltip:AddDoubleLine(L["Item ID"], id)
+	
+	if db[tooltip:GetName()].showItemID then
+		tooltip:AddDoubleLine(L["Item ID"], id)
+	end
+	
+	if db[tooltip:GetName()].showItemLevel then
+		local itemLevel = self.ItemLevelsDatabase[id] or 0
+		local score = (quality * itemLevel) * (itemSlot == "INVTYPE_2HWEAPON" and 2 or 1)
+		if score and score > 0 then
+			tooltip:AddDoubleLine(L["iLevel"], score, 1, .82, 0, GetItemQualityColor(quality))
 		end
 	end
-
-	if db.showItemLevel then
-		local _,_, itemRarity,_,_,_,_,itemSlot = GetItemInfo(id)
-		local r,g,b = GetItemQualityColor(itemRarity)
-		local itemLevel = self.ItemLevelsDatabase[tonumber(id)] or 0
-		local score = (itemRarity * itemLevel) * (itemSlot == "INVTYPE_2HWEAPON" and 2 or 1)
-    if score and score > 0 then
-			tooltip:AddDoubleLine(L["iLevel"], score, 1, .82, 0, r, g, b)
-		end
-	end
-
-	if db.showUsedInTree and not UnitAffectingCombat("player") then
-		local id = tonumber(string.match(item, "^|%x+|Hitem:(%d+):"))
+	
+	if tooltip ~= ItemRefTooltip and (db[tooltip:GetName()].showUsedInTree and not UnitAffectingCombat("player")) then
 		local t = Mendeleev:GetUsedInTree(id, ">"..id.."<")
 		local l = Mendeleev:GetUsedInList(t, 1, cacheUsedInFull[id], 1)
 		local header = L["Used in"]
@@ -594,121 +628,176 @@ function Mendeleev:AddTooltipData(tooltip, item)
 			tooltip:AddDoubleLine(l[i], l[i+1])
 		end
 	end
-
+	
 	tooltip.Mendeleev_data_added = true
 end
 
 function Mendeleev:Tooltip_OnHide(tooltip)
 	tooltip.Mendeleev_data_added = nil
+	tooltip.itemLink = nil
 end
 
-function Mendeleev:HookLinkFunckions()
-	local function GetItemLinkByName(name)
-		for itemID = 1, 25818 do
-			local itemName, hyperLink, itemQuality = GetItemInfo(itemID)
-			if itemName and itemName == name then
-				local _, _, _, hex = GetItemQualityColor(tonumber(itemQuality))
-				return hex.. "|H"..hyperLink.."|h["..itemName.."]|h|r"
+
+function Mendeleev:HoverHyperlink_Toggle()
+	if self.db.profile.hoverLink then
+		for i=1, NUM_CHAT_WINDOWS do
+			local frame = _G["ChatFrame"..i]
+			if not self:IsHooked(frame, "OnHyperlinkEnter") then
+				self:HookScript(frame, "OnHyperlinkEnter")
+			end
+			if not self:IsHooked(frame, "OnHyperlinkLeave") then
+				self:HookScript(frame, "OnHyperlinkLeave")
+			end
+		end
+	else
+		for i=1, NUM_CHAT_WINDOWS do
+			local frame = _G["ChatFrame"..i]
+			if self:IsHooked(frame, "OnHyperlinkEnter") then
+				self:Unhook(frame, "OnHyperlinkEnter")
+			end
+			if self:IsHooked(frame, "OnHyperlinkLeave") then
+				self:Unhook(frame, "OnHyperlinkLeave")
 			end
 		end
 	end
+end
+
+function Mendeleev:OnHyperlinkEnter(object)
+	if not self.db.profile.hoverLink then
+		self:HoverHyperlink_Toggle()
+		return self.hooks[object].OnHyperlinkEnter()
+	end
 	
+	local shortlink = arg1
+	if string.find(shortlink, "^item") then
+		GameTooltip:SetOwner(object,"ANCHOR_TOPRIGHT")
+		GameTooltip:SetHyperlink(shortlink)
+		self:AddTooltipData(GameTooltip, GetItemLink(shortlink))
+		GameTooltip:Show()
+		
+		--Auctioneer/Enchantrix/EnhTooltip/Informant support
+		if EnhTooltip and shortlink then
+			local name, _, quality = GetItemInfo(shortlink)
+			local item = EnhTooltip.FakeLink(shortlink, quality, name)
+			EnhTooltip.TooltipCall(GameTooltip, name, item, quality, 1)
+		end
+	elseif string.find(shortlink, "^enchant") then
+		GameTooltip:SetOwner(object,"ANCHOR_TOPRIGHT")
+		GameTooltip:SetHyperlink(shortlink)
+		GameTooltip:Show()
+	end
+	
+	return self.hooks[object].OnHyperlinkEnter()
+end
+
+function Mendeleev:OnHyperlinkLeave(object)
+	if not self.db.profile.hoverLink then
+		self:HoverHyperlink_Toggle()
+	end
+	GameTooltip:Hide()
+	return self.hooks[object].OnHyperlinkLeave()
+end
+
+function Mendeleev:SetItemRef(link, text, button)
+	ItemRefTooltip.itemLink = text
+	self.hooks.SetItemRef(link, text, button)
+end
+
+function Mendeleev:HookLinkFunctions()	
 	local MendeleevHookSetBagItem = GameTooltip.SetBagItem
-	function GameTooltip.SetBagItem(Mendeleev, container, slot)
-    GameTooltip.itemLink = GetContainerItemLink(container, slot)
-    _, GameTooltip.itemCount = GetContainerItemInfo(container, slot)
-    return MendeleevHookSetBagItem(Mendeleev, container, slot)
+	function GameTooltip.SetBagItem(self, container, slot)
+		GameTooltip.itemLink = GetContainerItemLink(container, slot)
+		return MendeleevHookSetBagItem(self, container, slot)
 	end
 	
 	local MendeleevHookSetQuestLogItem = GameTooltip.SetQuestLogItem
-	function GameTooltip.SetQuestLogItem(Mendeleev, itemType, index)
-    GameTooltip.itemLink = GetQuestLogItemLink(itemType, index)
-    if not GameTooltip.itemLink then return end
-    return MendeleevHookSetQuestLogItem(Mendeleev, itemType, index)
+	function GameTooltip.SetQuestLogItem(self, itemType, index)
+		GameTooltip.itemLink = GetQuestLogItemLink(itemType, index)
+		if not GameTooltip.itemLink then return end
+		return MendeleevHookSetQuestLogItem(self, itemType, index)
 	end
 	
 	local MendeleevHookSetQuestItem = GameTooltip.SetQuestItem
-	function GameTooltip.SetQuestItem(Mendeleev, itemType, index)
-    GameTooltip.itemLink = GetQuestItemLink(itemType, index)
-    return MendeleevHookSetQuestItem(Mendeleev, itemType, index)
+	function GameTooltip.SetQuestItem(self, itemType, index)
+		GameTooltip.itemLink = GetQuestItemLink(itemType, index)
+		return MendeleevHookSetQuestItem(self, itemType, index)
 	end
 	
 	local MendeleevHookSetLootItem = GameTooltip.SetLootItem
-	function GameTooltip.SetLootItem(Mendeleev, slot)
-    GameTooltip.itemLink = GetLootSlotLink(slot)
-    MendeleevHookSetLootItem(Mendeleev, slot)
+	function GameTooltip.SetLootItem(self, slot)
+		GameTooltip.itemLink = GetLootSlotLink(slot)
+		MendeleevHookSetLootItem(self, slot)
 	end
 	
 	local MendeleevHookSetInboxItem = GameTooltip.SetInboxItem
-	function GameTooltip.SetInboxItem(Mendeleev, mailID, attachmentIndex)
-    local itemName, itemTexture, inboxItemCount, inboxItemQuality = GetInboxItem(mailID)
-    GameTooltip.itemLink = GetItemLinkByName(itemName)
-    return MendeleevHookSetInboxItem(Mendeleev, mailID, attachmentIndex)
+	function GameTooltip.SetInboxItem(self, mailID, attachmentIndex)
+		local itemName = GetInboxItem(mailID)
+		GameTooltip.itemLink = GetItemLink(itemName)
+		return MendeleevHookSetInboxItem(self, mailID, attachmentIndex)
 	end
 	
 	local MendeleevHookSetInventoryItem = GameTooltip.SetInventoryItem
-	function GameTooltip.SetInventoryItem(Mendeleev, unit, slot)
-    GameTooltip.itemLink = GetInventoryItemLink(unit, slot)
-    return MendeleevHookSetInventoryItem(Mendeleev, unit, slot)
+	function GameTooltip.SetInventoryItem(self, unit, slot)
+		GameTooltip.itemLink = GetInventoryItemLink(unit, slot)
+		return MendeleevHookSetInventoryItem(self, unit, slot)
 	end
 	
 	local MendeleevHookSetLootRollItem = GameTooltip.SetLootRollItem
-	function GameTooltip.SetLootRollItem(Mendeleev, id)
-    GameTooltip.itemLink = GetLootRollItemLink(id)
-    return MendeleevHookSetLootRollItem(Mendeleev, id)
+	function GameTooltip.SetLootRollItem(self, id)
+		GameTooltip.itemLink = GetLootRollItemLink(id)
+		return MendeleevHookSetLootRollItem(self, id)
 	end
 	
 	local MendeleevHookSetLootRollItem = GameTooltip.SetLootRollItem
-	function GameTooltip.SetLootRollItem(Mendeleev, id)
-    GameTooltip.itemLink = GetLootRollItemLink(id)
-    return MendeleevHookSetLootRollItem(Mendeleev, id)
+	function GameTooltip.SetLootRollItem(self, id)
+		GameTooltip.itemLink = GetLootRollItemLink(id)
+		return MendeleevHookSetLootRollItem(self, id)
 	end
 	
 	local MendeleevHookSetMerchantItem = GameTooltip.SetMerchantItem
-	function GameTooltip.SetMerchantItem(Mendeleev, merchantIndex)
-    GameTooltip.itemLink = GetMerchantItemLink(merchantIndex)
-    return MendeleevHookSetMerchantItem(Mendeleev, merchantIndex)
+	function GameTooltip.SetMerchantItem(self, merchantIndex)
+		GameTooltip.itemLink = GetMerchantItemLink(merchantIndex)
+		return MendeleevHookSetMerchantItem(self, merchantIndex)
 	end
 	
 	local MendeleevHookSetCraftItem = GameTooltip.SetCraftItem
-	function GameTooltip.SetCraftItem(Mendeleev, skill, slot)
-    GameTooltip.itemLink = GetCraftReagentItemLink(skill, slot)
-    return MendeleevHookSetCraftItem(Mendeleev, skill, slot)
+	function GameTooltip.SetCraftItem(self, skill, slot)
+		GameTooltip.itemLink = GetCraftReagentItemLink(skill, slot)
+		return MendeleevHookSetCraftItem(self, skill, slot)
 	end
 	
 	local MendeleevHookSetCraftSpell = GameTooltip.SetCraftSpell
-	function GameTooltip.SetCraftSpell(Mendeleev, slot)
-    GameTooltip.itemLink = GetCraftItemLink(slot)
-    return MendeleevHookSetCraftSpell(Mendeleev, slot)
+	function GameTooltip.SetCraftSpell(self, slot)
+		GameTooltip.itemLink = GetCraftItemLink(slot)
+		return MendeleevHookSetCraftSpell(self, slot)
 	end
 	
 	local MendeleevHookSetTradeSkillItem = GameTooltip.SetTradeSkillItem
-	function GameTooltip.SetTradeSkillItem(Mendeleev, skillIndex, reagentIndex)
-    if reagentIndex then
+	function GameTooltip.SetTradeSkillItem(self, skillIndex, reagentIndex)
+		if reagentIndex then
 			GameTooltip.itemLink = GetTradeSkillReagentItemLink(skillIndex, reagentIndex)
 			else
 			GameTooltip.itemLink = GetTradeSkillItemLink(skillIndex)
 		end
-    return MendeleevHookSetTradeSkillItem(Mendeleev, skillIndex, reagentIndex)
+		return MendeleevHookSetTradeSkillItem(self, skillIndex, reagentIndex)
 	end
 	
 	local MendeleevHookSetAuctionSellItem = GameTooltip.SetAuctionSellItem
-	function GameTooltip.SetAuctionSellItem(Mendeleev)
-    local itemName, _, itemCount = GetAuctionSellItemInfo()
-    GameTooltip.itemCount = itemCount
-    GameTooltip.itemLink = GetItemLinkByName(itemName)
-    return MendeleevHookSetAuctionSellItem(Mendeleev)
+	function GameTooltip.SetAuctionSellItem(self)
+		local itemName = GetAuctionSellItemInfo()
+		GameTooltip.itemLink = GetItemLink(itemName)
+		return MendeleevHookSetAuctionSellItem(self)
 	end
 	
 	local MendeleevHookSetTradePlayerItem = GameTooltip.SetTradePlayerItem
-	function GameTooltip.SetTradePlayerItem(Mendeleev, index)
-    GameTooltip.itemLink = GetTradePlayerItemLink(index)
-    return MendeleevHookSetTradePlayerItem(Mendeleev, index)
+	function GameTooltip.SetTradePlayerItem(self, index)
+		GameTooltip.itemLink = GetTradePlayerItemLink(index)
+		return MendeleevHookSetTradePlayerItem(self, index)
 	end
 	
 	local MendeleevHookSetTradeTargetItem = GameTooltip.SetTradeTargetItem
-	function GameTooltip.SetTradeTargetItem(Mendeleev, index)
-    GameTooltip.itemLink = GetTradeTargetItemLink(index)
-    return MendeleevHookSetTradeTargetItem(Mendeleev, index)
+	function GameTooltip.SetTradeTargetItem(self, index)
+		GameTooltip.itemLink = GetTradeTargetItemLink(index)
+		return MendeleevHookSetTradeTargetItem(self, index)
 	end	
 end

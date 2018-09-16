@@ -15,12 +15,12 @@
 ## X-Category: Inventory
 ## SavedVariables: MendeleevDB, ItemCache
 ## X-Email: rabbit.magtheridon@gmail.com
-## X-Curse-Packaged-Version: r334
+## X-Curse-Packaged-Version: r335
 ## X-Curse-Project-Name: Mendeleev
 ## X-Curse-Project-ID: mendeleev
 ## X-Curse-Repository-ID: wow/mendeleev/mainline
 
-## X-Revision: 334
+## X-Revision: 335
 ## X-Date: 2018-09-13
 
 

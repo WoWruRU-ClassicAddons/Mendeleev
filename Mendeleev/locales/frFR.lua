@@ -1,6 +1,12 @@
 local L = AceLibrary("AceLocale-2.2"):new("Mendeleev")
 
 L:RegisterTranslations("frFR", function() return {
+	--["Hoverlink"] = true,
+	--["Enable display tooltip while hovering hyperlink in ChatFrame."] = true,
+	--["GameTooltip"] = true,
+	--["Standard tooltip."] = true,
+	--["ItemRefTooltip"] = true,
+	--["Tooltip when opening links from the chat."] = true,
 	["Toggle sets."] = "Active ou non les ensembles.",
 	["Toggle sets from showing information in the tooltip."] = "Affiche ou non les informations des ensembles dans la bulle d'aide.",
 	["Toggle sets in the %s category."] = "Affiche ou non les ensembles de la catégorie %s.",
@@ -9,11 +15,9 @@ L:RegisterTranslations("frFR", function() return {
 	["Toggle showing the item level in the tooltip."] = "Affiche ou non le niveau des objets dans la bulle d'aide.",
 	["Show item identifier"] = "Afficher l'identifiant des objets",
 	["Toggle showing the item identifier in the tooltip."] = "Affiche ou non l'itentifiant des objets dans la bulle d'aide.",
-	["Show item count"] = "Afficher le nbre d'objets",
-	["Toggle showing the item count in the tooltip."] = "Affiche ou non le nombre d'objets dans la bulle d'aide.",
-	--["On your character"] = true,
+	--["Show item count on your character"] = true,
 	--["Toggle showing the item count on your character in the tooltip."] = true,
-	--["On your account"] = true,
+	--["Show item count on your account"] = true,
 	--["Toggle showing the item count on your account in the tooltip."] = true,
 	["Show stack size"] = "Afficher la taille des piles",
 	["Toggle showing the stack size in the tooltip."] = "Affiche ou non la taille des piles dans la bulle d'aide.",

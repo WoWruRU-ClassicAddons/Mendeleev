@@ -20,28 +20,6 @@ local skillcolor = {
 	[3] = "|cffff7f3f",
 }
 
-local function GetItemLink(obj)
-	local itemID = tonumber(string.match(obj, "item:(%d+):"))
-	if not itemID then
-		for iterateID = 1, 25818 do
-			local itemName = GetItemInfo(iterateID)
-			if itemName and itemName == name then
-				itemID = iterateID
-			end
-		end
-	end
-	local itemName, hyperLink, itemQuality = GetItemInfo(itemID)
-	local hex = select(4, GetItemQualityColor(tonumber(itemQuality)))
-	return hex.. "|H"..hyperLink.."|h["..itemName.."]|h|r"
-end
-
-local function GetItemLevel(id)
-	local quality,_,_,_,_,itemSlot = select(3, GetItemInfo(id))
-	local itemLevel = Mendeleev.ItemLevelsDatabase[id] or 0
-	local score = (quality * itemLevel) * (itemSlot == "INVTYPE_2HWEAPON" and 2 or 1)
-	return score, GetItemQualityColor(quality)
-end
-
 local options = {
 	type = "group",
 	args = {
@@ -142,6 +120,9 @@ local options = {
 	},
 }
 
+-------------
+-- Initialize
+-------------
 function Mendeleev:OnInitialize()
 	self:RegisterDB("MendeleevDB")
 	self:RegisterDefaults("profile", {
@@ -280,6 +261,302 @@ function Mendeleev:OnDisable()
 	end
 end
 
+------------------
+-- Local functions
+------------------
+local function GetItemLink(obj)
+	local itemID = tonumber(string.match(obj, "item:(%d+):"))
+	if not itemID then
+		for iterateID = 1, 25818 do
+			local itemName = GetItemInfo(iterateID)
+			if itemName and itemName == name then
+				itemID = iterateID
+			end
+		end
+	end
+	local itemName, hyperLink, itemQuality = GetItemInfo(itemID)
+	local hex = select(4, GetItemQualityColor(tonumber(itemQuality)))
+	return hex.. "|H"..hyperLink.."|h["..itemName.."]|h|r"
+end
+
+local function GetItemLevel(id)
+	local quality,_,_,_,_,itemSlot = select(3, GetItemInfo(id))
+	local itemLevel = Mendeleev.ItemLevelsDatabase[id] or 0
+	local score = (quality * itemLevel) * (itemSlot == "INVTYPE_2HWEAPON" and 2 or 1)
+	return score, GetItemQualityColor(quality)
+end
+
+-----------------
+-- Hook functions
+-----------------
+function Mendeleev:HookLinkFunctions()	
+	local MendeleevHookSetBagItem = GameTooltip.SetBagItem
+	function GameTooltip.SetBagItem(self, container, slot)
+		GameTooltip.itemLink = GetContainerItemLink(container, slot)
+    _, GameTooltip.itemCount = GetContainerItemInfo(container, slot)
+		return MendeleevHookSetBagItem(self, container, slot)
+	end
+	
+	local MendeleevHookSetQuestLogItem = GameTooltip.SetQuestLogItem
+	function GameTooltip.SetQuestLogItem(self, itemType, index)
+		GameTooltip.itemLink = GetQuestLogItemLink(itemType, index)
+		if not GameTooltip.itemLink then return end
+		return MendeleevHookSetQuestLogItem(self, itemType, index)
+	end
+	
+	local MendeleevHookSetQuestItem = GameTooltip.SetQuestItem
+	function GameTooltip.SetQuestItem(self, itemType, index)
+		GameTooltip.itemLink = GetQuestItemLink(itemType, index)
+		return MendeleevHookSetQuestItem(self, itemType, index)
+	end
+	
+	local MendeleevHookSetLootItem = GameTooltip.SetLootItem
+	function GameTooltip.SetLootItem(self, slot)
+		GameTooltip.itemLink = GetLootSlotLink(slot)
+		MendeleevHookSetLootItem(self, slot)
+	end
+	
+	local MendeleevHookSetInboxItem = GameTooltip.SetInboxItem
+	function GameTooltip.SetInboxItem(self, mailID, attachmentIndex)
+		local itemName = GetInboxItem(mailID)
+		GameTooltip.itemLink = GetItemLink(itemName)
+		return MendeleevHookSetInboxItem(self, mailID, attachmentIndex)
+	end
+	
+	local MendeleevHookSetInventoryItem = GameTooltip.SetInventoryItem
+	function GameTooltip.SetInventoryItem(self, unit, slot)
+		GameTooltip.itemLink = GetInventoryItemLink(unit, slot)
+		return MendeleevHookSetInventoryItem(self, unit, slot)
+	end
+	
+	local MendeleevHookSetLootRollItem = GameTooltip.SetLootRollItem
+	function GameTooltip.SetLootRollItem(self, id)
+		GameTooltip.itemLink = GetLootRollItemLink(id)
+		return MendeleevHookSetLootRollItem(self, id)
+	end
+	
+	local MendeleevHookSetLootRollItem = GameTooltip.SetLootRollItem
+	function GameTooltip.SetLootRollItem(self, id)
+		GameTooltip.itemLink = GetLootRollItemLink(id)
+		return MendeleevHookSetLootRollItem(self, id)
+	end
+	
+	local MendeleevHookSetMerchantItem = GameTooltip.SetMerchantItem
+	function GameTooltip.SetMerchantItem(self, merchantIndex)
+		GameTooltip.itemLink = GetMerchantItemLink(merchantIndex)
+		return MendeleevHookSetMerchantItem(self, merchantIndex)
+	end
+	
+	local MendeleevHookSetCraftItem = GameTooltip.SetCraftItem
+	function GameTooltip.SetCraftItem(self, skill, slot)
+		GameTooltip.itemLink = GetCraftReagentItemLink(skill, slot)
+		return MendeleevHookSetCraftItem(self, skill, slot)
+	end
+	
+	local MendeleevHookSetCraftSpell = GameTooltip.SetCraftSpell
+	function GameTooltip.SetCraftSpell(self, slot)
+		GameTooltip.itemLink = GetCraftItemLink(slot)
+		return MendeleevHookSetCraftSpell(self, slot)
+	end
+	
+	local MendeleevHookSetTradeSkillItem = GameTooltip.SetTradeSkillItem
+	function GameTooltip.SetTradeSkillItem(self, skillIndex, reagentIndex)
+		if reagentIndex then
+			GameTooltip.itemLink = GetTradeSkillReagentItemLink(skillIndex, reagentIndex)
+		else
+			GameTooltip.itemLink = GetTradeSkillItemLink(skillIndex)
+		end
+		return MendeleevHookSetTradeSkillItem(self, skillIndex, reagentIndex)
+	end
+	
+	local MendeleevHookSetAuctionSellItem = GameTooltip.SetAuctionSellItem
+	function GameTooltip.SetAuctionSellItem(self)
+    local itemName, _, itemCount = GetAuctionSellItemInfo()
+    GameTooltip.itemCount = itemCount
+		GameTooltip.itemLink = GetItemLink(itemName)
+		return MendeleevHookSetAuctionSellItem(self)
+	end
+	
+	local MendeleevHookSetTradePlayerItem = GameTooltip.SetTradePlayerItem
+	function GameTooltip.SetTradePlayerItem(self, index)
+		GameTooltip.itemLink = GetTradePlayerItemLink(index)
+		return MendeleevHookSetTradePlayerItem(self, index)
+	end
+	
+	local MendeleevHookSetTradeTargetItem = GameTooltip.SetTradeTargetItem
+	function GameTooltip.SetTradeTargetItem(self, index)
+		GameTooltip.itemLink = GetTradeTargetItemLink(index)
+		return MendeleevHookSetTradeTargetItem(self, index)
+	end	
+end
+
+function Mendeleev:HoverHyperlink_Toggle()
+	if self.db.profile.hoverLink then
+		for i=1, NUM_CHAT_WINDOWS do
+			local frame = _G["ChatFrame"..i]
+			if not self:IsHooked(frame, "OnHyperlinkEnter") then
+				self:HookScript(frame, "OnHyperlinkEnter")
+			end
+			if not self:IsHooked(frame, "OnHyperlinkLeave") then
+				self:HookScript(frame, "OnHyperlinkLeave")
+			end
+		end
+	else
+		for i=1, NUM_CHAT_WINDOWS do
+			local frame = _G["ChatFrame"..i]
+			if self:IsHooked(frame, "OnHyperlinkEnter") then
+				self:Unhook(frame, "OnHyperlinkEnter")
+			end
+			if self:IsHooked(frame, "OnHyperlinkLeave") then
+				self:Unhook(frame, "OnHyperlinkLeave")
+			end
+		end
+	end
+end
+
+function Mendeleev:OnHyperlinkEnter(object)
+	if not self.db.profile.hoverLink then
+		return self.hooks[object].OnHyperlinkEnter()
+	end
+	
+	local shortlink = arg1
+	if string.find(shortlink, "^item") then
+		GameTooltip:SetOwner(this, "ANCHOR_TOPRIGHT")
+		GameTooltip:SetHyperlink(shortlink)
+		self:AddTooltipData(GameTooltip, GetItemLink(shortlink))
+		GameTooltip:Show()
+		
+		--Auctioneer/Enchantrix/EnhTooltip/Informant support
+		if EnhTooltip and shortlink then
+			local name, _, quality = GetItemInfo(shortlink)
+			local item = EnhTooltip.FakeLink(shortlink, quality, name)
+			EnhTooltip.TooltipCall(GameTooltip, name, item, quality, 1)
+		end
+	elseif string.find(shortlink, "^enchant") then
+		GameTooltip:SetOwner(this, "ANCHOR_TOPRIGHT")
+		GameTooltip:SetHyperlink(shortlink)
+		GameTooltip:Show()
+	end
+	
+	self.hooks[object].OnHyperlinkEnter()
+end
+
+function Mendeleev:OnHyperlinkLeave(object)
+	if not self.db.profile.hoverLink then
+		return self.hooks[object].OnHyperlinkLeave()
+	end
+	GameTooltip:Hide()
+	self.hooks[object].OnHyperlinkLeave()
+end
+
+function Mendeleev:SetItemRef(link, text, button)
+	ItemRefTooltip.itemLink = text
+	self.hooks.SetItemRef(link, text, button)
+end
+
+function Mendeleev:SetTooltipMoney(frame, money)
+	frame:AddLine(SALE_PRICE_COLON.." ", 1, 1, 1)
+	local lastLine = getglobal(frame:GetName().."TextLeft"..frame:NumLines())
+	local moneyFrame = getglobal(frame:GetName().."MoneyFrame")
+	moneyFrame:SetPoint("LEFT", lastLine, "RIGHT", 4, 0)
+	moneyFrame:Show()
+	MoneyFrame_Update(moneyFrame:GetName(), money)
+	frame:SetMinimumWidth(lastLine:GetWidth() - 10 + moneyFrame:GetWidth())
+end
+
+function Mendeleev:Tooltip_OnShow(tooltip)
+	self.hooks[tooltip].OnShow()
+	local item = tooltip.itemLink
+	if tooltip.Mendeleev_data_added or not item then return end
+	self:AddTooltipData(tooltip, item)
+	tooltip:Show()
+end
+
+function Mendeleev:Tooltip_OnHide(tooltip)
+	self.hooks[tooltip].OnHide()
+	tooltip.Mendeleev_data_added = nil
+	tooltip.itemLink = nil
+	tooltip.itemCount = nil
+end
+
+function Mendeleev:ShoppingTooltip_OnShow(tooltip)
+	self.hooks[tooltip].OnShow()
+	if not GameTooltip.itemLink then return end
+	
+	local db = self.db.profile
+  local slotTable = {
+		[INVTYPE_2HWEAPON] = {"MainHandSlot", "SecondaryHandSlot"},
+    [INVTYPE_BODY] = "ShirtSlot",
+    [INVTYPE_CHEST] = "ChestSlot",
+    [INVTYPE_CLOAK] = "BackSlot",
+    [INVTYPE_FEET] = "FeetSlot",
+    [INVTYPE_FINGER] = {"Finger0Slot", "Finger1Slot"},
+    [INVTYPE_HAND] = "HandsSlot",
+    [INVTYPE_HEAD] = "HeadSlot",
+    [INVTYPE_HOLDABLE] = "SecondaryHandSlot",
+    [INVTYPE_LEGS] = "LegsSlot",
+    [INVTYPE_NECK] = "NeckSlot",
+    [INVTYPE_RANGED] = "RangedSlot",
+    [INVTYPE_RELIC] = "RangedSlot",
+    [INVTYPE_ROBE] = "ChestSlot",
+    [INVTYPE_SHIELD] = "SecondaryHandSlot",
+    [INVTYPE_SHOULDER] = "ShoulderSlot",
+    [INVTYPE_TABARD] = "TabardSlot",
+    [INVTYPE_TRINKET] = {"Trinket0Slot", "Trinket1Slot"},
+    [INVTYPE_WAIST] = "WaistSlot",
+    [INVTYPE_WEAPON] = {"MainHandSlot", "SecondaryHandSlot"},
+    [INVTYPE_WEAPONMAINHAND] = "MainHandSlot",
+    [INVTYPE_WEAPONOFFHAND] = "SecondaryHandSlot",
+    [INVTYPE_WRIST] = "WristSlot",
+    [INVTYPE_RANGEDRIGHT] = "RangedSlot",
+	}
+	
+	local id = tonumber(string.match(GameTooltip.itemLink, "^|%x+|Hitem:(%d+):"))
+	local itemType = select(8, GetItemInfo(id))
+	local slotID, slotLink, itemID, slotID_other, slotLink_other, itemID_other
+	if type(slotTable[_G[itemType]]) ~= "table" then
+		-- ShoppingTooltip1
+		slotID = GetInventorySlotInfo(slotTable[_G[itemType]])
+		slotLink = GetInventoryItemLink("player", slotID)
+		if slotLink then
+			itemID = tonumber(string.match(slotLink, "^|%x+|Hitem:(%d+):"))
+		end
+	else
+		-- ShoppingTooltip1
+		slotID = GetInventorySlotInfo(slotTable[_G[itemType]][1])
+		slotLink = GetInventoryItemLink("player", slotID)
+		if slotLink then
+			itemID = tonumber(string.match(slotLink, "^|%x+|Hitem:(%d+):"))
+		end
+		-- ShoppingTooltip2
+		slotID_other = GetInventorySlotInfo(slotTable[_G[itemType]][2])
+		slotLink_other = GetInventoryItemLink("player", slotID_other)
+		if slotLink_other then
+			itemID_other = tonumber(string.match(slotLink_other, "^|%x+|Hitem:(%d+):"))
+		end
+	end
+	
+	if (string.match(tooltip:GetName(), "(%d)") == '1' and itemID) or (string.match(tooltip:GetName(), "(%d)") == '2' and itemID_other) then
+		if string.match(tooltip:GetName(), "(%d)") == '2' and itemID_other then itemID = itemID_other end
+		
+		if db.ShoppingTooltip.showItemID then
+			tooltip:AddDoubleLine(L["Item ID"], itemID)
+			tooltip:Show()
+		end
+		
+		if db.ShoppingTooltip.showItemLevel then
+			local iLevel, r, g, b = GetItemLevel(itemID)
+			if iLevel and iLevel > 0 then
+				tooltip:AddDoubleLine(L["iLevel"], iLevel, 1, .82, 0, r, g, b)
+				tooltip:Show()
+			end
+		end
+	end
+end
+
+-------------------
+-- Shared functions
+-------------------
 function Mendeleev:GetUsedInTable(skill, reagentid)
 	local ret
 	local ptrmr = PT:GetSetTable("TradeskillResultMats.Reverse." .. skill)
@@ -523,89 +800,6 @@ function Mendeleev:ScanTradeSkill()
 	end
 end
 
-function Mendeleev:ShoppingTooltip_OnShow(tooltip)
-	self.hooks[tooltip].OnShow()
-	if not GameTooltip.itemLink then return end
-	
-	local db = self.db.profile
-  local slotTable = {
-		[INVTYPE_2HWEAPON] = {"MainHandSlot", "SecondaryHandSlot"},
-    [INVTYPE_BODY] = "ShirtSlot",
-    [INVTYPE_CHEST] = "ChestSlot",
-    [INVTYPE_CLOAK] = "BackSlot",
-    [INVTYPE_FEET] = "FeetSlot",
-    [INVTYPE_FINGER] = {"Finger0Slot", "Finger1Slot"},
-    [INVTYPE_HAND] = "HandsSlot",
-    [INVTYPE_HEAD] = "HeadSlot",
-    [INVTYPE_HOLDABLE] = "SecondaryHandSlot",
-    [INVTYPE_LEGS] = "LegsSlot",
-    [INVTYPE_NECK] = "NeckSlot",
-    [INVTYPE_RANGED] = "RangedSlot",
-    [INVTYPE_RELIC] = "RangedSlot",
-    [INVTYPE_ROBE] = "ChestSlot",
-    [INVTYPE_SHIELD] = "SecondaryHandSlot",
-    [INVTYPE_SHOULDER] = "ShoulderSlot",
-    [INVTYPE_TABARD] = "TabardSlot",
-    [INVTYPE_TRINKET] = {"Trinket0Slot", "Trinket1Slot"},
-    [INVTYPE_WAIST] = "WaistSlot",
-    [INVTYPE_WEAPON] = {"MainHandSlot", "SecondaryHandSlot"},
-    [INVTYPE_WEAPONMAINHAND] = "MainHandSlot",
-    [INVTYPE_WEAPONOFFHAND] = "SecondaryHandSlot",
-    [INVTYPE_WRIST] = "WristSlot",
-    [INVTYPE_RANGEDRIGHT] = "RangedSlot",
-	}
-	
-	local id = tonumber(string.match(GameTooltip.itemLink, "^|%x+|Hitem:(%d+):"))
-	local itemType = select(8, GetItemInfo(id))
-	local slotID, slotLink, itemID, slotID_other, slotLink_other, itemID_other
-	if type(slotTable[_G[itemType]]) ~= "table" then
-		-- ShoppingTooltip1
-		slotID = GetInventorySlotInfo(slotTable[_G[itemType]])
-		slotLink = GetInventoryItemLink("player", slotID)
-		if slotLink then
-			itemID = tonumber(string.match(slotLink, "^|%x+|Hitem:(%d+):"))
-		end
-	else
-		-- ShoppingTooltip1
-		slotID = GetInventorySlotInfo(slotTable[_G[itemType]][1])
-		slotLink = GetInventoryItemLink("player", slotID)
-		if slotLink then
-			itemID = tonumber(string.match(slotLink, "^|%x+|Hitem:(%d+):"))
-		end
-		-- ShoppingTooltip2
-		slotID_other = GetInventorySlotInfo(slotTable[_G[itemType]][2])
-		slotLink_other = GetInventoryItemLink("player", slotID_other)
-		if slotLink_other then
-			itemID_other = tonumber(string.match(slotLink_other, "^|%x+|Hitem:(%d+):"))
-		end
-	end
-	
-	if (string.match(tooltip:GetName(), "(%d)") == '1' and itemID) or (string.match(tooltip:GetName(), "(%d)") == '2' and itemID_other) then
-		if string.match(tooltip:GetName(), "(%d)") == '2' and itemID_other then itemID = itemID_other end
-		
-		if db.ShoppingTooltip.showItemID then
-			tooltip:AddDoubleLine(L["Item ID"], itemID)
-			tooltip:Show()
-		end
-		
-		if db.ShoppingTooltip.showItemLevel then
-			local iLevel, r, g, b = GetItemLevel(itemID)
-			if iLevel and iLevel > 0 then
-				tooltip:AddDoubleLine(L["iLevel"], iLevel, 1, .82, 0, r, g, b)
-				tooltip:Show()
-			end
-		end
-	end
-end
-
-function Mendeleev:Tooltip_OnShow(tooltip)
-	self.hooks[tooltip].OnShow()
-	local item = tooltip.itemLink
-	if tooltip.Mendeleev_data_added or not item then return end
-	self:AddTooltipData(tooltip, item)
-	tooltip:Show()
-end
-
 function Mendeleev:AddTooltipData(tooltip, item)
 	local id = tonumber(string.match(item, "^|%x+|Hitem:(%d+):"))
 	local quality,_,_,_,stack,itemSlot = select(3, GetItemInfo(id))
@@ -763,186 +957,4 @@ function Mendeleev:AddTooltipData(tooltip, item)
 	end
 	
 	tooltip.Mendeleev_data_added = true
-end
-
-function Mendeleev:Tooltip_OnHide(tooltip)
-	self.hooks[tooltip].OnHide()
-	tooltip.Mendeleev_data_added = nil
-	tooltip.itemLink = nil
-	tooltip.itemCount = nil
-end
-
-function Mendeleev:HoverHyperlink_Toggle()
-	if self.db.profile.hoverLink then
-		for i=1, NUM_CHAT_WINDOWS do
-			local frame = _G["ChatFrame"..i]
-			if not self:IsHooked(frame, "OnHyperlinkEnter") then
-				self:HookScript(frame, "OnHyperlinkEnter")
-			end
-			if not self:IsHooked(frame, "OnHyperlinkLeave") then
-				self:HookScript(frame, "OnHyperlinkLeave")
-			end
-		end
-	else
-		for i=1, NUM_CHAT_WINDOWS do
-			local frame = _G["ChatFrame"..i]
-			if self:IsHooked(frame, "OnHyperlinkEnter") then
-				self:Unhook(frame, "OnHyperlinkEnter")
-			end
-			if self:IsHooked(frame, "OnHyperlinkLeave") then
-				self:Unhook(frame, "OnHyperlinkLeave")
-			end
-		end
-	end
-end
-
-function Mendeleev:OnHyperlinkEnter(object)
-	if not self.db.profile.hoverLink then
-		return self.hooks[object].OnHyperlinkEnter()
-	end
-	
-	local shortlink = arg1
-	if string.find(shortlink, "^item") then
-		GameTooltip:SetOwner(this, "ANCHOR_TOPRIGHT")
-		GameTooltip:SetHyperlink(shortlink)
-		self:AddTooltipData(GameTooltip, GetItemLink(shortlink))
-		GameTooltip:Show()
-		
-		--Auctioneer/Enchantrix/EnhTooltip/Informant support
-		if EnhTooltip and shortlink then
-			local name, _, quality = GetItemInfo(shortlink)
-			local item = EnhTooltip.FakeLink(shortlink, quality, name)
-			EnhTooltip.TooltipCall(GameTooltip, name, item, quality, 1)
-		end
-	elseif string.find(shortlink, "^enchant") then
-		GameTooltip:SetOwner(this, "ANCHOR_TOPRIGHT")
-		GameTooltip:SetHyperlink(shortlink)
-		GameTooltip:Show()
-	end
-	
-	self.hooks[object].OnHyperlinkEnter()
-end
-
-function Mendeleev:OnHyperlinkLeave(object)
-	if not self.db.profile.hoverLink then
-		return self.hooks[object].OnHyperlinkLeave()
-	end
-	GameTooltip:Hide()
-	self.hooks[object].OnHyperlinkLeave()
-end
-
-function Mendeleev:SetItemRef(link, text, button)
-	ItemRefTooltip.itemLink = text
-	self.hooks.SetItemRef(link, text, button)
-end
-
-function Mendeleev:SetTooltipMoney(frame, money)
-	frame:AddLine(SALE_PRICE_COLON.." ", 1, 1, 1)
-	local lastLine = getglobal(frame:GetName().."TextLeft"..frame:NumLines())
-	local moneyFrame = getglobal(frame:GetName().."MoneyFrame")
-	moneyFrame:SetPoint("LEFT", lastLine, "RIGHT", 4, 0)
-	moneyFrame:Show()
-	MoneyFrame_Update(moneyFrame:GetName(), money)
-	frame:SetMinimumWidth(lastLine:GetWidth() - 10 + moneyFrame:GetWidth())
-end
-
-function Mendeleev:HookLinkFunctions()	
-	local MendeleevHookSetBagItem = GameTooltip.SetBagItem
-	function GameTooltip.SetBagItem(self, container, slot)
-		GameTooltip.itemLink = GetContainerItemLink(container, slot)
-    _, GameTooltip.itemCount = GetContainerItemInfo(container, slot)
-		return MendeleevHookSetBagItem(self, container, slot)
-	end
-	
-	local MendeleevHookSetQuestLogItem = GameTooltip.SetQuestLogItem
-	function GameTooltip.SetQuestLogItem(self, itemType, index)
-		GameTooltip.itemLink = GetQuestLogItemLink(itemType, index)
-		if not GameTooltip.itemLink then return end
-		return MendeleevHookSetQuestLogItem(self, itemType, index)
-	end
-	
-	local MendeleevHookSetQuestItem = GameTooltip.SetQuestItem
-	function GameTooltip.SetQuestItem(self, itemType, index)
-		GameTooltip.itemLink = GetQuestItemLink(itemType, index)
-		return MendeleevHookSetQuestItem(self, itemType, index)
-	end
-	
-	local MendeleevHookSetLootItem = GameTooltip.SetLootItem
-	function GameTooltip.SetLootItem(self, slot)
-		GameTooltip.itemLink = GetLootSlotLink(slot)
-		MendeleevHookSetLootItem(self, slot)
-	end
-	
-	local MendeleevHookSetInboxItem = GameTooltip.SetInboxItem
-	function GameTooltip.SetInboxItem(self, mailID, attachmentIndex)
-		local itemName = GetInboxItem(mailID)
-		GameTooltip.itemLink = GetItemLink(itemName)
-		return MendeleevHookSetInboxItem(self, mailID, attachmentIndex)
-	end
-	
-	local MendeleevHookSetInventoryItem = GameTooltip.SetInventoryItem
-	function GameTooltip.SetInventoryItem(self, unit, slot)
-		GameTooltip.itemLink = GetInventoryItemLink(unit, slot)
-		return MendeleevHookSetInventoryItem(self, unit, slot)
-	end
-	
-	local MendeleevHookSetLootRollItem = GameTooltip.SetLootRollItem
-	function GameTooltip.SetLootRollItem(self, id)
-		GameTooltip.itemLink = GetLootRollItemLink(id)
-		return MendeleevHookSetLootRollItem(self, id)
-	end
-	
-	local MendeleevHookSetLootRollItem = GameTooltip.SetLootRollItem
-	function GameTooltip.SetLootRollItem(self, id)
-		GameTooltip.itemLink = GetLootRollItemLink(id)
-		return MendeleevHookSetLootRollItem(self, id)
-	end
-	
-	local MendeleevHookSetMerchantItem = GameTooltip.SetMerchantItem
-	function GameTooltip.SetMerchantItem(self, merchantIndex)
-		GameTooltip.itemLink = GetMerchantItemLink(merchantIndex)
-		return MendeleevHookSetMerchantItem(self, merchantIndex)
-	end
-	
-	local MendeleevHookSetCraftItem = GameTooltip.SetCraftItem
-	function GameTooltip.SetCraftItem(self, skill, slot)
-		GameTooltip.itemLink = GetCraftReagentItemLink(skill, slot)
-		return MendeleevHookSetCraftItem(self, skill, slot)
-	end
-	
-	local MendeleevHookSetCraftSpell = GameTooltip.SetCraftSpell
-	function GameTooltip.SetCraftSpell(self, slot)
-		GameTooltip.itemLink = GetCraftItemLink(slot)
-		return MendeleevHookSetCraftSpell(self, slot)
-	end
-	
-	local MendeleevHookSetTradeSkillItem = GameTooltip.SetTradeSkillItem
-	function GameTooltip.SetTradeSkillItem(self, skillIndex, reagentIndex)
-		if reagentIndex then
-			GameTooltip.itemLink = GetTradeSkillReagentItemLink(skillIndex, reagentIndex)
-		else
-			GameTooltip.itemLink = GetTradeSkillItemLink(skillIndex)
-		end
-		return MendeleevHookSetTradeSkillItem(self, skillIndex, reagentIndex)
-	end
-	
-	local MendeleevHookSetAuctionSellItem = GameTooltip.SetAuctionSellItem
-	function GameTooltip.SetAuctionSellItem(self)
-    local itemName, _, itemCount = GetAuctionSellItemInfo()
-    GameTooltip.itemCount = itemCount
-		GameTooltip.itemLink = GetItemLink(itemName)
-		return MendeleevHookSetAuctionSellItem(self)
-	end
-	
-	local MendeleevHookSetTradePlayerItem = GameTooltip.SetTradePlayerItem
-	function GameTooltip.SetTradePlayerItem(self, index)
-		GameTooltip.itemLink = GetTradePlayerItemLink(index)
-		return MendeleevHookSetTradePlayerItem(self, index)
-	end
-	
-	local MendeleevHookSetTradeTargetItem = GameTooltip.SetTradeTargetItem
-	function GameTooltip.SetTradeTargetItem(self, index)
-		GameTooltip.itemLink = GetTradeTargetItemLink(index)
-		return MendeleevHookSetTradeTargetItem(self, index)
-	end	
 end

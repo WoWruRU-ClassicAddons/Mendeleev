@@ -240,6 +240,7 @@ function Mendeleev:OnEnable()
 	self:HookLinkFunctions()
 	self:HoverHyperlink_Toggle()
 	self:Hook("SetItemRef")
+	self:Hook("SetTooltipMoney")
 	self:HookScript(GameTooltip, "OnShow", "Tooltip_OnShow")
 	self:HookScript(GameTooltip, "OnHide", "Tooltip_OnHide")
 	self:HookScript(ItemRefTooltip, "OnShow", "Tooltip_OnShow")
@@ -610,6 +611,26 @@ function Mendeleev:AddTooltipData(tooltip, item)
 	local quality,_,_,_,stack,itemSlot = select(3, GetItemInfo(id))
 	local db = self.db.profile
 	
+	if tooltip == GameTooltip and db.GameTooltip.showPriceValue then
+		if not MerchantFrame:IsShown() then
+			if self.ItemPricesDatabase[id] then
+				local sell = string.match(self.ItemPricesDatabase[id], "(%d+),")
+				sell = tonumber(sell)
+				local count = tooltip.itemCount or 1
+				if sell > 0 then SetTooltipMoney(tooltip, sell*count) end
+			else
+				for i=1, tooltip:NumLines() do
+					local line = _G[tooltip:GetName().."TextLeft"..i]:GetText()
+					if string.match(line, ITEM_UNSELLABLE) then
+						line = nil
+						break
+					end
+				end	
+				tooltip:AddLine(ITEM_UNSELLABLE, 1, 1, 1)
+			end
+		end
+	end
+
 	if not cache[item] then
 		local cachetable
 		for _,v in ipairs(MENDELEEV_SETS) do
@@ -728,28 +749,6 @@ function Mendeleev:AddTooltipData(tooltip, item)
 		end
 	end
 	
-	if tooltip == GameTooltip and db.GameTooltip.showPriceValue then
-		if self.ItemPricesDatabase[id] then
-			local sell, buy = string.match(self.ItemPricesDatabase[id], "(%d+),(%d+)")
-			sell = tonumber(sell)
-			buy = tonumber(buy)
-			local count = tooltip.itemCount or 1
-			if MerchantFrame:IsShown() then
-				GameTooltip_ClearMoney()
-			end
-			if sell > 0 then SetTooltipMoney(tooltip, sell*count) end
-		else
-			for i=1, tooltip:NumLines() do
-				local line = _G[tooltip:GetName().."TextLeft"..i]:GetText()
-				if string.match(line, ITEM_UNSELLABLE) then
-					line = nil
-					break
-				end
-			end	
-			tooltip:AddLine(ITEM_UNSELLABLE, 1, 1, 1)
-		end
-	end
-	
 	if tooltip ~= ItemRefTooltip and (db[tooltip:GetName()].showUsedInTree and not UnitAffectingCombat("player")) then
 		local t = Mendeleev:GetUsedInTree(id, ">"..id.."<")
 		local l = Mendeleev:GetUsedInList(t, 1, cacheUsedInFull[id], 1)
@@ -835,6 +834,16 @@ end
 function Mendeleev:SetItemRef(link, text, button)
 	ItemRefTooltip.itemLink = text
 	self.hooks.SetItemRef(link, text, button)
+end
+
+function Mendeleev:SetTooltipMoney(frame, money)
+	frame:AddLine(SALE_PRICE_COLON.." ", 1, 1, 1)
+	local lastLine = getglobal(frame:GetName().."TextLeft"..frame:NumLines())
+	local moneyFrame = getglobal(frame:GetName().."MoneyFrame")
+	moneyFrame:SetPoint("LEFT", lastLine, "RIGHT", 4, 0)
+	moneyFrame:Show()
+	MoneyFrame_Update(moneyFrame:GetName(), money)
+	frame:SetMinimumWidth(lastLine:GetWidth() - 10 + moneyFrame:GetWidth())
 end
 
 function Mendeleev:HookLinkFunctions()	

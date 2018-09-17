@@ -246,6 +246,10 @@ function Mendeleev:OnEnable()
 	self:HookScript(ItemRefTooltip, "OnHide", "Tooltip_OnHide")
 	self:HookScript(ShoppingTooltip1, "OnShow", "ShoppingTooltip_OnShow")
 	self:HookScript(ShoppingTooltip2, "OnShow", "ShoppingTooltip_OnShow")
+	if IsAddOnLoaded("EquipCompare") then
+		self:HookScript(ComparisonTooltip1, "OnShow", "ShoppingTooltip_OnShow")
+		self:HookScript(ComparisonTooltip2, "OnShow", "ShoppingTooltip_OnShow")
+	end
 	
 	if firstLoad then
 		-- load our sets into the cache
@@ -269,6 +273,10 @@ function Mendeleev:OnDisable()
 	self:Unhook(ItemRefTooltip, "OnHide")
 	self:Unhook(ShoppingTooltip1, "OnShow")
 	self:Unhook(ShoppingTooltip2, "OnShow")
+	if IsAddOnLoaded("EquipCompare") then
+		self:Unhook(ComparisonTooltip1, "OnShow")
+		self:Unhook(ComparisonTooltip2, "OnShow")
+	end
 end
 
 function Mendeleev:GetUsedInTable(skill, reagentid)
@@ -520,7 +528,7 @@ function Mendeleev:ShoppingTooltip_OnShow(tooltip)
 	
 	local db = self.db.profile
   local slotTable = {
-    [INVTYPE_2HWEAPON] = "MainHandSlot",
+		[INVTYPE_2HWEAPON] = {"MainHandSlot", "SecondaryHandSlot"},
     [INVTYPE_BODY] = "ShirtSlot",
     [INVTYPE_CHEST] = "ChestSlot",
     [INVTYPE_CLOAK] = "BackSlot",
@@ -571,8 +579,8 @@ function Mendeleev:ShoppingTooltip_OnShow(tooltip)
 		end
 	end
 	
-	if (tooltip == ShoppingTooltip1 and itemID) or (tooltip == ShoppingTooltip2 and itemID_other) then
-		if tooltip == ShoppingTooltip2 and itemID_other then itemID = itemID_other end
+	if (string.match(tooltip:GetName(), "(%d)") == '1' and itemID) or (string.match(tooltip:GetName(), "(%d)") == '2' and itemID_other) then
+		if string.match(tooltip:GetName(), "(%d)") == '2' and itemID_other then itemID = itemID_other end
 		
 		if db.ShoppingTooltip.showItemID then
 			tooltip:AddDoubleLine(L["Item ID"], itemID)
@@ -759,11 +767,10 @@ function Mendeleev:AddTooltipData(tooltip, item)
 end
 
 function Mendeleev:Tooltip_OnHide(tooltip)
+	self.hooks[tooltip].OnHide()
 	tooltip.Mendeleev_data_added = nil
 	tooltip.itemLink = nil
 	tooltip.itemCount = nil
-	ShoppingTooltip1:Hide()
-	ShoppingTooltip2:Hide()
 end
 
 function Mendeleev:HoverHyperlink_Toggle()
@@ -792,7 +799,6 @@ end
 
 function Mendeleev:OnHyperlinkEnter(object)
 	if not self.db.profile.hoverLink then
-		self:HoverHyperlink_Toggle()
 		return self.hooks[object].OnHyperlinkEnter()
 	end
 	
@@ -815,15 +821,15 @@ function Mendeleev:OnHyperlinkEnter(object)
 		GameTooltip:Show()
 	end
 	
-	return self.hooks[object].OnHyperlinkEnter()
+	self.hooks[object].OnHyperlinkEnter()
 end
 
 function Mendeleev:OnHyperlinkLeave(object)
 	if not self.db.profile.hoverLink then
-		self:HoverHyperlink_Toggle()
+		return self.hooks[object].OnHyperlinkLeave()
 	end
 	GameTooltip:Hide()
-	return self.hooks[object].OnHyperlinkLeave()
+	self.hooks[object].OnHyperlinkLeave()
 end
 
 function Mendeleev:SetItemRef(link, text, button)

@@ -23,7 +23,6 @@ lib:SetBaseTranslations {
 	["Herbalism"] = true,
 	["Mining"] = true,
 	["Pick Pocket"] = true,
-	["Prospecting"] = true,
 	["Skinning"] = true,
 	["Smelting"] = true,
 	
@@ -39,7 +38,6 @@ lib:SetBaseTranslations {
 	["First Aid"] = true,
 	["Gnomish Engineering"] = true,
 	["Goblin Engineering"] = true,
-	["Jewelcrafting"] = true,
 	["Leatherworking"] = true,
 	["Master Axesmith"] = true,
 	["Master Hammersmith"] = true,
@@ -63,7 +61,6 @@ elseif GAME_LOCALE == "deDE" then
 	["Herbalism"] = "Kr\195\164uterkunde",
 	["Mining"] = "Bergbau",
 	["Pick Pocket"] = "Taschendiebstahl",
-	["Prospecting"] = "Sondieren",
 	["Skinning"] = "K\195\188rschnerei",
 	["Smelting"] = "Verh\195\188ttung",
 	
@@ -79,7 +76,6 @@ elseif GAME_LOCALE == "deDE" then
 	["First Aid"] = "Erste Hilfe",
 	["Gnomish Engineering"] = "Gnomeningenieur",
 	["Goblin Engineering"] = "Gobliningenieur",
-	["Jewelcrafting"] = "Juwelenschleifen",
 	["Leatherworking"] = "Lederverarbeitung",
 	["Master Axesmith"] = "Axtschmied",
 	["Master Hammersmith"] = "Hammerschmied",
@@ -99,7 +95,6 @@ elseif GAME_LOCALE == "frFR" then
 	["Herbalism"] = "Herboristerie",
 	["Mining"] = "Minage",
 	["Pick Pocket"] = "Vol à la tire",
-	["Prospecting"] = "Prospection",
 	["Skinning"] = "Dépecage",
 	["Smelting"] = "Fondre",
 	
@@ -115,7 +110,6 @@ elseif GAME_LOCALE == "frFR" then
 	["First Aid"] = "Premiers soins",
 	["Gnomish Engineering"] = "Ingénieur gnome",
 	["Goblin Engineering"] = "Ingénieur gobelin",
-	["Jewelcrafting"] = "Joaillerie",
 	["Leatherworking"] = "Travail du cuir",
 	["Master Axesmith"] = "Fabricant de haches",
 	["Master Hammersmith"] = "Fabricant de marteaux",
@@ -135,7 +129,6 @@ elseif GAME_LOCALE == "zhCN" then
 	["Herbalism"] = "采药",
 	["Mining"] = "采矿",
 	["Pick Pocket"] = "偷窃",
-	["Prospecting"] = "选矿",	--TBC check
 	["Skinning"] = "剥皮",
 	["Smelting"] = "熔炼",
 	
@@ -151,7 +144,6 @@ elseif GAME_LOCALE == "zhCN" then
 	["First Aid"] = "急救",
 	["Gnomish Engineering"] = "侏儒工程师",
 	["Goblin Engineering"] = "地精工程师",
-	["Jewelcrafting"] = "珠宝加工",	--TBC check
 	["Leatherworking"] = "制皮",
 	["Master Axesmith"] = "铸斧大师",
 	["Master Hammersmith"] = "铸锤大师",
@@ -171,7 +163,6 @@ elseif GAME_LOCALE == "zhTW" then
 	["Herbalism"] = "草藥學",
 	["Mining"] = "採礦",
 	["Pick Pocket"] = "偷竊",
-	["Prospecting"] = "勘探",
 	["Skinning"] = "剝皮",
 	["Smelting"] = "熔煉",
 	
@@ -187,7 +178,6 @@ elseif GAME_LOCALE == "zhTW" then
 	["First Aid"] = "急救",
 	["Gnomish Engineering"] = "地精工程學",
 	["Goblin Engineering"] = "哥布林工程學",
-	["Jewelcrafting"] = "珠寶設計",
 	["Leatherworking"] = "製皮",
 	["Master Axesmith"] = "鑄斧大師",
 	["Master Hammersmith"] = "鑄錘大師",
@@ -207,7 +197,6 @@ elseif GAME_LOCALE == "koKR" then
 	["Herbalism"] = "약초 채집",
 	["Mining"] = "채광",
 	["Pick Pocket"] = "훔치기",
-	["Prospecting"] = "보석 추출",
 	["Skinning"] = "무두질",
 	["Smelting"] = "제련술",
 	
@@ -223,7 +212,6 @@ elseif GAME_LOCALE == "koKR" then
 	["First Aid"] = "응급 치료",
 	["Gnomish Engineering"] = "노움 기계공학",
 	["Goblin Engineering"] = "고블린 기계공학",
-	["Jewelcrafting"] = "보석세공",
 	["Leatherworking"] = "가죽 세공",
 	["Master Axesmith"] = "도끼 제작의 대가",
 	["Master Hammersmith"] = "망치 제작의 대가",
@@ -243,7 +231,6 @@ elseif GAME_LOCALE == "esES" then
 	["Herbalism"] = "Botánica",   -- Herborister\195\173a / Bot\195\161nica
 	["Mining"] = "Minería",
 	["Pick Pocket"] = "Robar",
-	["Prospecting"] = "Prospectar",
 	["Skinning"] = "Desuello",
 	["Smelting"] = "Fundición",
 	
@@ -259,7 +246,6 @@ elseif GAME_LOCALE == "esES" then
 	["First Aid"] = "Primeros auxilios",
 	["Gnomish Engineering"] = "Ingeniería gnómica",
 	["Goblin Engineering"] = "Ingeniería goblin",
-	["Jewelcrafting"] = "Joyería",
 	["Leatherworking"] = "Peletería",
 	["Master Axesmith"] = "Forjador de hachas",
 	["Master Hammersmith"] = "Forjador de martillos", -- check
@@ -279,7 +265,6 @@ elseif GAME_LOCALE == "ruRU" then
 	["Herbalism"] = "Травничество",
 	["Mining"] = "Горное дело",
 	["Pick Pocket"] = "Обшаривание карманов",
-	["Prospecting"] = "Просеивание",
 	["Skinning"] = "Снятие шкур",
 	["Smelting"] = "Выплавка металлов",
 	
@@ -295,7 +280,6 @@ elseif GAME_LOCALE == "ruRU" then
 	["First Aid"] = "Первая помощь",
 	["Gnomish Engineering"] = "Гномское инженерное дело",
 	["Goblin Engineering"] = "Гоблинское инженерное дело",
-	["Jewelcrafting"] = "Ювелирное дело",
 	["Leatherworking"] = "Кожевничество",
 	["Master Axesmith"] = "Мастер школы Топора",
 	["Master Hammersmith"] = "Мастер школы Молота",

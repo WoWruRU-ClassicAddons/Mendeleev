@@ -11,7 +11,6 @@ local cache = {}
 Mendeleev = AceLibrary("AceAddon-2.0"):new("AceConsole-2.0", "AceDB-2.0", "AceHook-2.1", "AceEvent-2.0")
 local realm = GetRealmName()
 local playerName = UnitName('player')
-
 local skillcolor = {
 	[-1] = "|cffff0000",
 	[0] = "|cff7f7f7f",
@@ -117,6 +116,13 @@ local options = {
 			order = 5,
 			args = {},
 		},
+		populateWDB = {
+			type = "execute",
+			name = L["Populate WDB"],
+			desc = L["Populating all items in WDB."],
+			func = "PopulateWDB",
+			order = 6,
+		},
 	},
 }
 
@@ -211,14 +217,14 @@ function Mendeleev:OnInitialize()
 		}
 	end
 	
-	waterfall:Register('Mendeleev', 'aceOptions', options, 'title', 'Mendeleev '..GetAddOnMetadata("Mendeleev", "Version")..'.'..GetAddOnMetadata("Mendeleev", "X-Revision"),'colorR', .85, 'colorG', .44, 'colorB', .84) 
+	waterfall:Register('Mendeleev', 'aceOptions', options, 'title', 'Mendeleev '..GetAddOnMetadata("Mendeleev", "Version")..'.'..GetAddOnMetadata("Mendeleev", "X-Revision"),'colorR', .5, 'colorG', .5, 'colorB', .5) 
 	self:RegisterChatCommand({"/mendeleev", "/mend"}, function() waterfall:Open('Mendeleev') end)
 	self:RegisterChatCommand({"/mendeleevcl"}, options)
 end
 
 local firstLoad = true
 function Mendeleev:OnEnable()
-	self:HookLinkFunctions()
+	self:HookLinkFunctions(GameTooltip)
 	self:HoverHyperlink_Toggle()
 	self:Hook("SetItemRef")
 	self:Hook("SetTooltipMoney")
@@ -269,8 +275,9 @@ local function GetItemLink(obj)
 	if not itemID then
 		for iterateID = 1, 25818 do
 			local itemName = GetItemInfo(iterateID)
-			if itemName and itemName == name then
+			if itemName and itemName == obj then
 				itemID = iterateID
+				break
 			end
 		end
 	end
@@ -289,104 +296,105 @@ end
 -----------------
 -- Hook functions
 -----------------
-function Mendeleev:HookLinkFunctions()	
-	local MendeleevHookSetBagItem = GameTooltip.SetBagItem
-	function GameTooltip.SetBagItem(self, container, slot)
-		GameTooltip.itemLink = GetContainerItemLink(container, slot)
-    _, GameTooltip.itemCount = GetContainerItemInfo(container, slot)
-		return MendeleevHookSetBagItem(self, container, slot)
+function Mendeleev:HookLinkFunctions(tooltip)	
+	local Blizzard_SetBagItem = tooltip.SetBagItem
+	function tooltip.SetBagItem(self, container, slot)
+		tooltip.itemLink = GetContainerItemLink(container, slot)
+    tooltip.itemCount = select(2, GetContainerItemInfo(container, slot))
+		Blizzard_SetBagItem(self, container, slot)
 	end
 	
-	local MendeleevHookSetQuestLogItem = GameTooltip.SetQuestLogItem
-	function GameTooltip.SetQuestLogItem(self, itemType, index)
-		GameTooltip.itemLink = GetQuestLogItemLink(itemType, index)
-		if not GameTooltip.itemLink then return end
-		return MendeleevHookSetQuestLogItem(self, itemType, index)
+	local Blizzard_SetQuestLogItem = tooltip.SetQuestLogItem
+	function tooltip.SetQuestLogItem(self, itemType, index)
+		tooltip.itemLink = GetQuestLogItemLink(itemType, index)
+		if not tooltip.itemLink then return end
+		tooltip.itemCount = select(3, GetQuestLogRewardInfo(index))
+		Blizzard_SetQuestLogItem(self, itemType, index)
 	end
 	
-	local MendeleevHookSetQuestItem = GameTooltip.SetQuestItem
-	function GameTooltip.SetQuestItem(self, itemType, index)
-		GameTooltip.itemLink = GetQuestItemLink(itemType, index)
-		return MendeleevHookSetQuestItem(self, itemType, index)
+	local Blizzard_SetQuestItem = tooltip.SetQuestItem
+	function tooltip.SetQuestItem(self, itemType, index)
+		tooltip.itemLink = GetQuestItemLink(itemType, index)
+		tooltip.itemCount = select(3, GetQuestItemInfo(itemType, index))
+		Blizzard_SetQuestItem(self, itemType, index)
 	end
 	
-	local MendeleevHookSetLootItem = GameTooltip.SetLootItem
-	function GameTooltip.SetLootItem(self, slot)
-		GameTooltip.itemLink = GetLootSlotLink(slot)
-		MendeleevHookSetLootItem(self, slot)
+	local Blizzard_SetLootItem = tooltip.SetLootItem
+	function tooltip.SetLootItem(self, slot)
+		tooltip.itemLink = GetLootSlotLink(slot)
+		tooltip.itemCount = select(3, GetLootSlotInfo(slot))
+		Blizzard_SetLootItem(self, slot)
 	end
 	
-	local MendeleevHookSetInboxItem = GameTooltip.SetInboxItem
-	function GameTooltip.SetInboxItem(self, mailID, attachmentIndex)
+	local Blizzard_SetInboxItem = tooltip.SetInboxItem
+	function tooltip.SetInboxItem(self, mailID, attachmentIndex)
 		local itemName = GetInboxItem(mailID)
-		GameTooltip.itemLink = GetItemLink(itemName)
-		return MendeleevHookSetInboxItem(self, mailID, attachmentIndex)
+		tooltip.itemLink = GetItemLink(itemName)
+		Blizzard_SetInboxItem(self, mailID, attachmentIndex)
 	end
 	
-	local MendeleevHookSetInventoryItem = GameTooltip.SetInventoryItem
-	function GameTooltip.SetInventoryItem(self, unit, slot)
-		GameTooltip.itemLink = GetInventoryItemLink(unit, slot)
-		return MendeleevHookSetInventoryItem(self, unit, slot)
+	local Blizzard_SetInventoryItem = tooltip.SetInventoryItem
+	function tooltip.SetInventoryItem(self, unit, slot)		
+		tooltip.itemLink = GetInventoryItemLink(unit, slot)
+		Blizzard_SetInventoryItem(self, unit, slot)
 	end
 	
-	local MendeleevHookSetLootRollItem = GameTooltip.SetLootRollItem
-	function GameTooltip.SetLootRollItem(self, id)
-		GameTooltip.itemLink = GetLootRollItemLink(id)
-		return MendeleevHookSetLootRollItem(self, id)
+	local Blizzard_SetLootRollItem = tooltip.SetLootRollItem
+	function tooltip.SetLootRollItem(self, id)
+		tooltip.itemLink = GetLootRollItemLink(id)
+		tooltip.itemCount = select(3, GetLootRollItemInfo(id))
+		Blizzard_SetLootRollItem(self, id)
 	end
 	
-	local MendeleevHookSetLootRollItem = GameTooltip.SetLootRollItem
-	function GameTooltip.SetLootRollItem(self, id)
-		GameTooltip.itemLink = GetLootRollItemLink(id)
-		return MendeleevHookSetLootRollItem(self, id)
+	local Blizzard_SetMerchantItem = tooltip.SetMerchantItem
+	function tooltip.SetMerchantItem(self, merchantIndex)
+		tooltip.itemLink = GetMerchantItemLink(merchantIndex)
+		Blizzard_SetMerchantItem(self, merchantIndex)
 	end
 	
-	local MendeleevHookSetMerchantItem = GameTooltip.SetMerchantItem
-	function GameTooltip.SetMerchantItem(self, merchantIndex)
-		GameTooltip.itemLink = GetMerchantItemLink(merchantIndex)
-		return MendeleevHookSetMerchantItem(self, merchantIndex)
+	local Blizzard_SetCraftItem = tooltip.SetCraftItem
+	function tooltip.SetCraftItem(self, skill, slot)
+		tooltip.itemLink = GetCraftReagentItemLink(skill, slot)
+		Blizzard_SetCraftItem(self, skill, slot)
 	end
 	
-	local MendeleevHookSetCraftItem = GameTooltip.SetCraftItem
-	function GameTooltip.SetCraftItem(self, skill, slot)
-		GameTooltip.itemLink = GetCraftReagentItemLink(skill, slot)
-		return MendeleevHookSetCraftItem(self, skill, slot)
+	local Blizzard_SetCraftSpell = tooltip.SetCraftSpell
+	function tooltip.SetCraftSpell(self, slot)
+		tooltip.itemLink = GetCraftItemLink(slot)
+		Blizzard_SetCraftSpell(self, slot)
 	end
 	
-	local MendeleevHookSetCraftSpell = GameTooltip.SetCraftSpell
-	function GameTooltip.SetCraftSpell(self, slot)
-		GameTooltip.itemLink = GetCraftItemLink(slot)
-		return MendeleevHookSetCraftSpell(self, slot)
-	end
-	
-	local MendeleevHookSetTradeSkillItem = GameTooltip.SetTradeSkillItem
-	function GameTooltip.SetTradeSkillItem(self, skillIndex, reagentIndex)
+	local Blizzard_SetTradeSkillItem = tooltip.SetTradeSkillItem
+	function tooltip.SetTradeSkillItem(self, skillIndex, reagentIndex)		
 		if reagentIndex then
-			GameTooltip.itemLink = GetTradeSkillReagentItemLink(skillIndex, reagentIndex)
+			tooltip.itemLink = GetTradeSkillReagentItemLink(skillIndex, reagentIndex)
 		else
-			GameTooltip.itemLink = GetTradeSkillItemLink(skillIndex)
+			tooltip.itemLink = GetTradeSkillItemLink(skillIndex)
 		end
-		return MendeleevHookSetTradeSkillItem(self, skillIndex, reagentIndex)
+		Blizzard_SetTradeSkillItem(self, skillIndex, reagentIndex)
 	end
 	
-	local MendeleevHookSetAuctionSellItem = GameTooltip.SetAuctionSellItem
-	function GameTooltip.SetAuctionSellItem(self)
+	local Blizzard_SetAuctionSellItem = tooltip.SetAuctionSellItem
+	function tooltip.SetAuctionSellItem(self)		
     local itemName, _, itemCount = GetAuctionSellItemInfo()
-    GameTooltip.itemCount = itemCount
-		GameTooltip.itemLink = GetItemLink(itemName)
-		return MendeleevHookSetAuctionSellItem(self)
+		tooltip.itemLink = GetItemLink(itemName)
+    tooltip.itemCount = itemCount
+		Blizzard_SetAuctionSellItem(self)
 	end
 	
-	local MendeleevHookSetTradePlayerItem = GameTooltip.SetTradePlayerItem
-	function GameTooltip.SetTradePlayerItem(self, index)
-		GameTooltip.itemLink = GetTradePlayerItemLink(index)
-		return MendeleevHookSetTradePlayerItem(self, index)
+	local Blizzard_SetTradePlayerItem = tooltip.SetTradePlayerItem
+	function tooltip.SetTradePlayerItem(self, index)
+		tooltip.itemLink = GetTradePlayerItemLink(index)
+		tooltip.itemCount = select(3, GetTradePlayerItemInfo(index))
+		
+		Blizzard_SetTradePlayerItem(self, index)	
 	end
 	
-	local MendeleevHookSetTradeTargetItem = GameTooltip.SetTradeTargetItem
-	function GameTooltip.SetTradeTargetItem(self, index)
-		GameTooltip.itemLink = GetTradeTargetItemLink(index)
-		return MendeleevHookSetTradeTargetItem(self, index)
+	local Blizzard_SetTradeTargetItem = tooltip.SetTradeTargetItem
+	function tooltip.SetTradeTargetItem(self, index)	
+		tooltip.itemLink = GetTradeTargetItemLink(index)
+		tooltip.itemCount = select(3, GetTradeTargetItemInfo(index))
+		Blizzard_SetTradeTargetItem(self, index)
 	end	
 end
 
@@ -483,7 +491,6 @@ function Mendeleev:ShoppingTooltip_OnShow(tooltip)
 	self.hooks[tooltip].OnShow()
 	if not GameTooltip.itemLink then return end
 	
-	local db = self.db.profile
   local slotTable = {
 		[INVTYPE_2HWEAPON] = {"MainHandSlot", "SecondaryHandSlot"},
     [INVTYPE_BODY] = "ShirtSlot",
@@ -539,12 +546,12 @@ function Mendeleev:ShoppingTooltip_OnShow(tooltip)
 	if (string.match(tooltip:GetName(), "(%d)") == '1' and itemID) or (string.match(tooltip:GetName(), "(%d)") == '2' and itemID_other) then
 		if string.match(tooltip:GetName(), "(%d)") == '2' and itemID_other then itemID = itemID_other end
 		
-		if db.ShoppingTooltip.showItemID then
+		if self.db.profile.ShoppingTooltip.showItemID then
 			tooltip:AddDoubleLine(L["Item ID"], itemID)
 			tooltip:Show()
 		end
 		
-		if db.ShoppingTooltip.showItemLevel then
+		if self.db.profile.ShoppingTooltip.showItemLevel then
 			local iLevel, r, g, b = GetItemLevel(itemID)
 			if iLevel and iLevel > 0 then
 				tooltip:AddDoubleLine(L["iLevel"], iLevel, 1, .82, 0, r, g, b)
@@ -710,9 +717,6 @@ function Mendeleev:GetUsedInTree(id, history)
 	local usedin = self:GetUsedInFullTable(id)
 	if usedin then
 		for k in pairs(usedin) do
-			if not GetItemInfo(k) then
-				GameTooltip:SetHyperlink('item:'..k) -- adding an item to the cache!
-			end
 			if string.find(history, ">"..k.."<") then
 				if k < 0 then
 					data[getn(data)+1] = {k, GetSpellInfo(-k) or false, id2skill[k], "..."}
@@ -805,26 +809,17 @@ function Mendeleev:AddTooltipData(tooltip, item)
 	local quality,_,_,_,stack,itemSlot = select(3, GetItemInfo(id))
 	local db = self.db.profile
 	
-	if tooltip == GameTooltip and db.GameTooltip.showPriceValue then
+	if db[tooltip:GetName()] and db[tooltip:GetName()].showPriceValue then
 		if not MerchantFrame:IsShown() then
-			if self.ItemPricesDatabase[id] then
-				local sell = string.match(self.ItemPricesDatabase[id], "(%d+),")
-				sell = tonumber(sell)
-				local count = tooltip.itemCount or 1
-				if sell > 0 then SetTooltipMoney(tooltip, sell*count) end
-			else
-				for i=1, tooltip:NumLines() do
-					local line = _G[tooltip:GetName().."TextLeft"..i]:GetText()
-					if string.match(line, ITEM_UNSELLABLE) then
-						line = nil
-						break
-					end
-				end	
+			local price = self.ItemPricesDatabase[id]
+			if not price or price == 0 then
 				tooltip:AddLine(ITEM_UNSELLABLE, 1, 1, 1)
+			else
+				SetTooltipMoney(tooltip, price*(tooltip.itemCount or 1))
 			end
 		end
 	end
-
+	
 	if not cache[item] then
 		local cachetable
 		for _,v in ipairs(MENDELEEV_SETS) do
@@ -884,77 +879,88 @@ function Mendeleev:AddTooltipData(tooltip, item)
 		end
 	end
 	
-	if db[tooltip:GetName()].showPlayerItemCount then
-		local count = GetItemCount(item, false)
-		local countIncludeBank = GetItemCount(item, true)
-		if not countIncludeBank then
-			tooltip:AddDoubleLine(L["You have"], count.." (+"..L["N/A"]..")")
-		else
-			local bankcount = countIncludeBank - count
-			if count + bankcount > 0 then
-				tooltip:AddDoubleLine(L["You have"], count..(bankcount > 0 and (" (+"..bankcount..")") or ""))
-			end
-		end
-	end
-	
-	if tooltip ~= ItemRefTooltip and db[tooltip:GetName()].showAccountItemCount then
-		local header = L["You have on account"]
-		local invCount, bankCount
-		
-		for acc_player in pairs(ItemCache[realm]) do
-			if acc_player ~= playerName then
-				invCount = ItemCache[realm][acc_player]['Inventory'][id]
-				if invCount then
-					if header then
-						tooltip:AddLine(header)
-						header = nil
-					end
-					if not IsAltKeyDown() then
-						tooltip:AddLine("   - "..skillcolor[1].."...|r")
-						break
-					end
-					if not ItemCache[realm][acc_player]['Bank'] then
-						tooltip:AddDoubleLine("   - "..skillcolor[1]..acc_player.."|r", invCount.." (+"..L["N/A"]..")")
-					else
-						bankCount = ItemCache[realm][acc_player]['Bank'][id]
-						if bankCount then
-							tooltip:AddDoubleLine("   - "..skillcolor[1]..acc_player.."|r", invCount.." (+"..bankCount..")")
-						else
-							tooltip:AddDoubleLine("   - "..skillcolor[1]..acc_player.."|r", invCount)
-						end
-					end					
+	if db[tooltip:GetName()] then
+		if db[tooltip:GetName()].showPlayerItemCount then
+			local count = GetItemCount(item, false)
+			local countIncludeBank = GetItemCount(item, true)
+			if not countIncludeBank then
+				tooltip:AddDoubleLine(L["You have"], count.." (+"..L["N/A"]..")")
+			else
+				local bankcount = countIncludeBank - count
+				if count + bankcount > 0 then
+					tooltip:AddDoubleLine(L["You have"], count..(bankcount > 0 and (" (+"..bankcount..")") or ""))
 				end
 			end
 		end
-	end
-	
-	if stack and stack > 1 and db[tooltip:GetName()].showStackSize then
-		tooltip:AddDoubleLine(L["Stacksize"], stack)
-	end
-	
-	if db[tooltip:GetName()].showItemID then
-		tooltip:AddDoubleLine(L["Item ID"], id)
-	end
-	
-	if db[tooltip:GetName()].showItemLevel then
-		local iLevel, r, g, b = GetItemLevel(id)
-		if iLevel and iLevel > 0 then
-			tooltip:AddDoubleLine(L["iLevel"], iLevel, 1, .82, 0, r, g, b)
-		end
-	end
-	
-	if tooltip ~= ItemRefTooltip and (db[tooltip:GetName()].showUsedInTree and not UnitAffectingCombat("player")) then
-		local t = Mendeleev:GetUsedInTree(id, ">"..id.."<")
-		local l = Mendeleev:GetUsedInList(t, 1, cacheUsedInFull[id], 1)
-		local header = L["Used in"]
-		for i = 1, getn(l), 2 do
-			if header then
-				tooltip:AddLine(header)
-				header = nil
+		
+		if db[tooltip:GetName()].showAccountItemCount then
+			local header = L["You have on account"]
+			local invCount, bankCount
+			
+			for acc_player in pairs(ItemCache[realm]) do
+				if acc_player ~= playerName then
+					invCount = ItemCache[realm][acc_player]['Inventory'][id]
+					if invCount then
+						if header then
+							tooltip:AddLine(header)
+							header = nil
+						end
+						if not IsAltKeyDown() then
+							tooltip:AddLine("   - "..skillcolor[1].."...|r")
+							break
+						end
+						if not ItemCache[realm][acc_player]['Bank'] then
+							tooltip:AddDoubleLine("   - "..skillcolor[1]..acc_player.."|r", invCount.." (+"..L["N/A"]..")")
+						else
+							bankCount = ItemCache[realm][acc_player]['Bank'][id]
+							if bankCount then
+								tooltip:AddDoubleLine("   - "..skillcolor[1]..acc_player.."|r", invCount.." (+"..bankCount..")")
+							else
+								tooltip:AddDoubleLine("   - "..skillcolor[1]..acc_player.."|r", invCount)
+							end
+						end					
+					end
+				end
 			end
-			tooltip:AddDoubleLine(l[i], l[i+1])
+		end
+		
+		if stack and stack > 1 and db[tooltip:GetName()].showStackSize then
+			tooltip:AddDoubleLine(L["Stacksize"], stack)
+		end
+		
+		if db[tooltip:GetName()].showItemID then
+			tooltip:AddDoubleLine(L["Item ID"], id)
+		end
+		
+		if db[tooltip:GetName()].showItemLevel then
+			local iLevel, r, g, b = GetItemLevel(id)
+			if iLevel and iLevel > 0 then
+				tooltip:AddDoubleLine(L["iLevel"], iLevel, 1, .82, 0, r, g, b)
+			end
+		end
+		
+		if db[tooltip:GetName()].showUsedInTree and not UnitAffectingCombat("player") then
+			local t = Mendeleev:GetUsedInTree(id, ">"..id.."<")
+			local l = Mendeleev:GetUsedInList(t, 1, cacheUsedInFull[id], 1)
+			local header = L["Used in"]
+			for i = 1, getn(l), 2 do
+				if header then
+					tooltip:AddLine(header)
+					header = nil
+				end
+				tooltip:AddDoubleLine(l[i], l[i+1])
+			end
 		end
 	end
 	
 	tooltip.Mendeleev_data_added = true
+end
+
+function Mendeleev:PopulateWDB()
+	for item_id = 1, 25818 do
+		local info = GetItemInfo('item:' .. item_id)
+		if not info then
+			GameTooltip:SetHyperlink('item:' .. item_id) -- adding an item to the cache!
+		end
+	end
 end

@@ -33,6 +33,8 @@ L:RegisterTranslations("frFR", function() return {
 	--["Minimal skill advance for an item to show up in the 'used in' tree if Shift is held."] = true
 	--["Show item price"] = true,
 	--["Displays the price of the item in the tooltip."] = true,
+	--["Populate WDB"] = true,
+	--["Populating all items in WDB."] = true,
 	["TRADESKILL_UNKNOWN"] = "inconnu",
 	["TRADESKILL_TRIVIAL"] = "trivial",
 	["TRADESKILL_EASY"] = "facile",

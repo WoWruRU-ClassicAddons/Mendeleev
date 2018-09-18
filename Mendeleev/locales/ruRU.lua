@@ -35,6 +35,8 @@ L:RegisterTranslations("ruRU", function() return {
 	["Minimal skill advance for an item to show up in the 'used in' tree if Shift is held."] = "Минимальный навык умения для предмета отображаемого в списка 'Используется в', при удерживании нажатой клавиши Shift.",
 	["Show item price"] = "Показать цену товара",
 	["Displays the price of the item in the tooltip."] = "Отображает цену предмета в подсказке.",
+	["Populate WDB"] = "Заполнение кэша",
+	["Populating all items in WDB."] = "Заполняет все предметы в кэш.",
 	["TRADESKILL_UNKNOWN"] = "Неизвестно",
 	["TRADESKILL_TRIVIAL"] = "Низкий",
 	["TRADESKILL_EASY"] = "Легкий",

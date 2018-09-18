@@ -33,6 +33,8 @@ L:RegisterTranslations("koKR", function() return {
 	["Minimal skill advance for an item to show up in the 'used in' tree if Shift is held."] = "SHFIT키 사용 시 '사용처' 목록에 표시할 아이템에 대한 최소 제작 기술입니다.",
 	--["Show item price"] = true,
 	--["Displays the price of the item in the tooltip."] = true,
+	--["Populate WDB"] = true,
+	--["Populating all items in WDB."] = true,
 	["TRADESKILL_UNKNOWN"] = "알 수 없음",
 	["TRADESKILL_TRIVIAL"] = "최하",
 	["TRADESKILL_EASY"] = "하",

@@ -33,6 +33,8 @@ L:RegisterTranslations("zhTW", function() return {
 	["Minimal skill advance for an item to show up in the 'used in' tree if Shift is held."] = "當按下 Shift 鍵時最小化可用商業技能訊息並顯示目前提示。",
 	--["Show item price"] = true,
 	--["Displays the price of the item in the tooltip."] = true,
+	--["Populate WDB"] = true,
+	--["Populating all items in WDB."] = true,
 	["TRADESKILL_UNKNOWN"] = "未知",
 	["TRADESKILL_TRIVIAL"] = "無價值",
 	["TRADESKILL_EASY"] = "簡單",

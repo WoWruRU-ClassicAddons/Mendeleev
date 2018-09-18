@@ -7,7 +7,6 @@ LibStub("LibPeriodicTable-3.1"):AddData("Misc", "$Rev: 55222 $", {
 	["Misc.Bag.Special.Enchanting"]="21858:28,22249:24,22246:16,22248:20,30748:20",
 	["Misc.Bag.Special.Engineering"]="23775:28,23774:24,30745:20",
 	["Misc.Bag.Special.Herb"]="22251:20,22250:12,22252:24",
-	["Misc.Bag.Special.Jewelcrafting"]="24270:24,30747:20",
 	["Misc.Bag.Special.Mining"]="30746:20,29540:28",
 	["Misc.Bag.Special.Quiver"]="18714:18,29143:18,19319:16,34105:24,29144:18,7371:14,34100:20,8217:16,3605:12,2662:16,3573:10,7278:8,2101:6,11362:10,5439:8",
 	["Misc.Bag.Special.Soul Shard"]="21342:28,21872:28,21341:24,22244:16,22243:12,21340:20",

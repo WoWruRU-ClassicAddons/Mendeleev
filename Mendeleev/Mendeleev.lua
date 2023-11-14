@@ -4,6 +4,7 @@ local BTS = LibStub("LibBabble-Tradeskill-3.0"):GetLookupTable()
 local waterfall = AceLibrary:HasInstance("Waterfall-1.0") and AceLibrary("Waterfall-1.0") or nil
 
 local _G = getfenv(0)
+INVTYPE_RANGEDRIGHT = "Ranged"
 
 -- We cache the results, so that we don't have to do a PT lookup for every item.
 local cache = {}
